@@ -4,14 +4,14 @@
     "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj": {}
   },
   "projects": {
-    "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj": {
+    "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
-        "projectName": "MISA.Infrastructure",
-        "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
+        "projectUniqueName": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj",
+        "projectName": "MISA.Core",
+        "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj",
         "packagesPath": "C:\\Users\\trung\\.nuget\\packages\\",
-        "outputPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\obj\\",
+        "outputPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\trung\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -54,7 +54,79 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.203\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.204\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
+        "projectName": "MISA.Infrastructure",
+        "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\trung\\.nuget\\packages\\",
+        "outputPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\trung\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {
+                "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.90, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[1.3.9, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.204\\RuntimeIdentifierGraph.json"
         }
       }
     }

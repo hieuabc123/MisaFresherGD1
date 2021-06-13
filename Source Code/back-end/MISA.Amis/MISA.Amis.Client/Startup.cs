@@ -7,6 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using MISA.Core.Entities.Directory;
+using MISA.Core.Interfaces.Infrastructures;
+using MISA.Core.Interfaces.Services;
+using MISA.Core.Services;
+using MISA.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +37,15 @@ namespace MISA.Amis.Client
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MISA.Amis.Client", Version = "v1" });
             });
+
+            // Config DI:
+            // 1. Base:
+            services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+
+            // 2. Employee
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

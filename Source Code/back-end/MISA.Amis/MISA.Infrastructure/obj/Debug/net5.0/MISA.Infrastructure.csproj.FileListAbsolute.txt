@@ -10,3 +10,6 @@ E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MIS
 E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Infrastructure\obj\Debug\net5.0\MISA.Infrastructure.dll
 E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Infrastructure\obj\Debug\net5.0\ref\MISA.Infrastructure.dll
 E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Infrastructure\obj\Debug\net5.0\MISA.Infrastructure.pdb
+E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Infrastructure\bin\Debug\net5.0\MISA.Core.dll
+E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Infrastructure\bin\Debug\net5.0\MISA.Core.pdb
+E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Infrastructure\obj\Debug\net5.0\MISA.Infrastructure.csproj.CopyComplete
