@@ -123,6 +123,20 @@ namespace MISA.Infrastructure.Data
             //3. Kết quả trả về
             return rowAffect;
         }
+
+        public bool CheckDuplicate(string propName, string propValue, Entity entity)
+        {
+            //1. Gán đầu vào cho tham số Store Proceduce
+            _dynamicParameters.Add($"@p_{propName}", propValue);
+            var entityId = entity.GetType().GetProperty($"{_entityName}Id").GetValue(entity).ToString();
+            _dynamicParameters.Add($"@p_{_entityName}Id", entityId);
+
+            //2. Thực thi lệnh truy vấn
+            var isExists = dbConnection.ExecuteScalar<bool>($"Proc_Check{propName}Exists", param: _dynamicParameters, commandType: CommandType.StoredProcedure);
+
+            //3. Kết quả trả về
+            return isExists;
+        }
         #endregion
 
         #region Method not implement

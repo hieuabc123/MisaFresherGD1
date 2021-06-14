@@ -160,19 +160,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\trung\\.nuget\\packages\\": {}
+    "C:\\Users\\nthieu\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
+      "projectUniqueName": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
       "projectName": "MISA.Infrastructure",
-      "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\trung\\.nuget\\packages\\",
-      "outputPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\obj\\",
+      "projectPath": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
+      "packagesPath": "C:\\Users\\nthieu\\.nuget\\packages\\",
+      "outputPath": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\trung\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\nthieu\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -186,8 +190,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {
-              "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj"
+            "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {
+              "projectPath": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj"
             }
           }
         }
@@ -230,7 +234,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.204\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -25,6 +25,14 @@ namespace MISA.Core.Interfaces.Infrastructures
         /// </returns>
         /// Created By: NTHIEU (12/06/2021)
         Task <IEnumerable<Employee>> GetEmployeePagingFilter(int PageIndex, int PageSize, string DataFilter);
+
+        /// <summary>
+        /// Lấy mã nhân viên mới
+        /// </summary>
+        /// <returns>
+        /// (String) Mã nhân viên
+        /// </returns>
+        Task<string> GetNewEmployeeCode();
         #endregion
     }
 }

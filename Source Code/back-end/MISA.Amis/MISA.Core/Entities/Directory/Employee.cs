@@ -1,4 +1,5 @@
-﻿using MISA.Core.Entities.Base;
+﻿using MISA.Core.Attributes;
+using MISA.Core.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,14 @@ namespace MISA.Core.Entities.Directory
         /// <summary>
         /// Mã nhân viên
         /// </summary>
+        [Required("Mã nhân viên không được để trống")]
+        [CheckDuplicateDB("Mã nhân viên đã tồn tại trên hệ thống")]
         public string EmployeeCode { get; set; }
 
         /// <summary>
         /// Họ và tên nhân viên
         /// </summary>
+        [Required("Họ và tên nhân viên không được để trống")]
         public string FullName { get; set; }
 
         /// <summary>
@@ -56,8 +60,9 @@ namespace MISA.Core.Entities.Directory
         /// <summary>
         /// Khóa ngoại tới phòng ban bảng (Department)
         /// </summary>
-        public Guid DepartmentId { get; set; }
-        
+        [Required("Đơn vị không được để trống")]
+        public Guid? DepartmentId { get; set; }
+
         /// <summary>
         /// Vị trí trong công ty
         /// </summary>

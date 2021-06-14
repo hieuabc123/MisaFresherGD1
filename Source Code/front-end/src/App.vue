@@ -1,28 +1,42 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <the-navbar></the-navbar>
+    <div class="layout-left">
+      <the-content></the-content>
+      <the-header></the-header>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TheContent from "./components/Layouts/TheContent.vue";
+import TheHeader from "./components/Layouts/TheHeader.vue";
+import TheNavbar from "./components/Layouts/TheNavbar.vue";
+import './components/Common/CSS/common.scss'
+import './components/Common/CSS/icons.scss'
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    TheNavbar,
+    TheContent,
+    TheHeader,
+  },
+};
 </script>
+<style lang="scss">
 
-<style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100vh;
+}
+.layout-left{
+  flex-grow: 1;
+  background: #ccc;
+  position: relative;
+  height: 100vh;
+  // transform: translate3d(0,0,0);
+	// transition: transform .3s;
 }
 </style>

@@ -12,6 +12,7 @@ namespace MISA.Core.Entities.Base
     /// Created By: NTHIEU (12/06/2021)
     public class BaseEntity
     {
+
         /// <summary>
         /// Ngày tạo dữ liệu
         /// </summary>
@@ -31,5 +32,10 @@ namespace MISA.Core.Entities.Base
         /// Người sửa dữ liệu
         /// </summary>
         public string ModifiedBy { get; set; }
+
+        /// <summary>
+        /// Trạng thái của đối tượng
+        /// </summary>
+        public string Status { get; set; }
     }
 }

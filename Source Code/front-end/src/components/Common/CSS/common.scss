@@ -1,0 +1,40 @@
+//SCSS Dùng chung
+
+/**
+* Created By : NTHIEU (14/06/2021)
+*/
+
+// #region Declare
+@font-face {
+    font-family: notosans-bold;
+    src: url("../../../assets/fonts/notosans-bold.3ede5aff.woff2");
+}
+
+@font-face {
+    font-family: notosans-italic;
+    src: url("../../../assets/fonts/notosans-italic.1c1aaac9.woff2");
+}
+
+@font-face {
+    font-family: notosans-regular;
+    src: url("../../../assets/fonts/notosans-regular.2cb88a13.woff2");
+}
+
+@font-face {
+    font-family: notosans-semibold;
+    src: url("../../../assets/fonts/notosans-semibold.df3e6dc4.woff2");
+}
+
+// #endregion
+body {
+    margin: 0;
+    font-family: notosans-regular;
+    font-size: 13px;
+}
+
+a {
+    text-decoration: none;
+    &:focus {
+        outline: none;
+    }
+}

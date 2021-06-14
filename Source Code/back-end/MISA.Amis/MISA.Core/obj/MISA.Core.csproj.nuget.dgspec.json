@@ -1,20 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {}
+    "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {}
   },
   "projects": {
-    "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {
+    "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj",
+        "projectUniqueName": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj",
         "projectName": "MISA.Core",
-        "projectPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj",
-        "packagesPath": "C:\\Users\\trung\\.nuget\\packages\\",
-        "outputPath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\obj\\",
+        "projectPath": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\MISA.Core.csproj",
+        "packagesPath": "C:\\Users\\nthieu\\.nuget\\packages\\",
+        "outputPath": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Core\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\trung\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\nthieu\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -54,7 +57,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.204\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,4 +1,5 @@
-﻿using MISA.Core.Entities.Base;
+﻿using MISA.Core.Attributes;
+using MISA.Core.Entities.Base;
 using MISA.Core.Interfaces.Infrastructures;
 using MISA.Core.Interfaces.Services;
 using System;
@@ -84,8 +85,8 @@ namespace MISA.Core.Services
                 return new ActionServiceResult
                 {
                     StatusCode = 200,
-                    UserMsg = "Sửa thành công",
-                    DevMsg = "Sửa thành công",
+                    UserMsg = entity.Status,
+                    DevMsg = entity.Status,
                     Data = await _baseRepository.UpdateData(entity, id)
                 };
             }
@@ -94,8 +95,8 @@ namespace MISA.Core.Services
                 return new ActionServiceResult
                 {
                     StatusCode = 402,
-                    UserMsg = "Dữ liệu không hợp lệ",
-                    DevMsg = "Dữ liệu không hợp lệ",
+                    UserMsg = entity.Status,
+                    DevMsg = entity.Status,
                     Data = null
                 };
             }
@@ -113,7 +114,109 @@ namespace MISA.Core.Services
         /// </returns>
         public virtual bool Validate(Entity entity)
         {
-            return true;
+            var isValid = CheckNullorEmpty(entity);
+            //var isValid = CheckDuplicateInDataBase(entity);
+            return isValid;
+        }
+
+        /// <summary>
+        ///     - Check Value (Required) is Null in Object
+        ///     - entity is (Object)
+        /// </summary>
+        /// <param name="entity">Đối tượng cần xử lý</param>
+        /// <returns>
+        ///     -bool
+        ///     -True or False
+        /// </returns>
+        /// Created By: NTHIEU (28/05/2021)
+        public bool CheckNullorEmpty(Entity entity)
+        {
+            //1. Declare
+            var isValid = true;
+
+            //2. Lấy các property của đối tượng
+            var properties = entity.GetType().GetProperties();
+
+            //3. Duyệt từng property
+            foreach (var prop in properties)
+            {
+                //3.1 lấy giá trị
+                var propValue = prop.GetValue(entity);
+                //3.2 Lấy tên property
+                var propName = prop.Name;
+
+                //3.3 Lấy type của prop tương ứng
+                var propType = prop.PropertyType;
+
+                //3.4 Gán giá trị cho những property có Required
+                var attributeRequired = prop.GetCustomAttributes(typeof(Required), true);
+
+                //3.5 Nếu có trường Required (Check Trống)
+                if (attributeRequired.Length > 0)
+                {
+                    var msg = (attributeRequired[0] as Required).Msg;
+                    if ((propType == typeof(Guid?) || propType == Nullable.GetUnderlyingType(typeof(Guid?))) && propValue == null )
+                    {
+                        entity.Status += $"{msg}";
+                        isValid = false;
+                    }
+                    else if (string.IsNullOrEmpty(propValue.ToString())|| propValue == null)
+                    {
+                        entity.Status = msg;
+                        isValid = false;
+                    }
+                }
+            };
+
+            return isValid;
+        }
+
+        /// <summary>
+        ///     - Check Value is Duplicate in Database
+        ///     - entity is (Object)
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>
+        ///     -bool
+        ///     -True or False
+        /// </returns>
+        /// Created By: NTHIEU (14/06/2021)
+        public bool CheckDuplicateInDataBase(Entity entity)
+        {
+            var isValid = true;
+            //1. Lấy toàn bộ property của entity
+            var properties = entity.GetType().GetProperties();
+
+            //2. Duyệt từng property trong properties
+            foreach (var prop in properties)
+            {
+                //2.1 Lấy value của property
+                var propValue = prop.GetValue(entity);
+
+                //2.2 Lấy tên của property
+                var propName = prop.Name;
+
+                //2.3 Lấy Type của property
+                var propType = prop.PropertyType;
+
+                //2.4 Lấy attribute tương ứng
+                var attributeRCheckDuplicateDB = prop.GetCustomAttributes(typeof(CheckDuplicateDB), true);
+
+                //2.5 Kiểm tra nếu có attribute thì thực hiện công việc
+                if (attributeRCheckDuplicateDB.Length > 0 && propValue != null)
+                {
+                    var msg = (attributeRCheckDuplicateDB[0] as CheckDuplicateDB).Msg;
+
+                    var isExists = _baseRepository.CheckDuplicate(propName, propValue.ToString(), entity);
+                    if (isExists == true)
+                    {
+                        isValid = false;
+                        entity.Status += $"\n{msg}";
+                    }
+                }
+            };
+
+            return isValid;
         }
         #endregion
 

@@ -70,5 +70,22 @@ namespace MISA.Core.Interfaces.Infrastructures
         /// Created By: NTHIEU (12/06/2021)
         Task <int> DeleteData(Guid id);
         #endregion
+
+        #region Another
+        /// <summary>
+        ///     - Check Duplicate data in database
+        ///     - propName is (string)
+        ///     - propValue is (string)
+        /// </summary>
+        /// <param name="entity"> Đối tượng cần check</param>
+        /// <param name="propName">Tên của property cần check</param>
+        /// <param name="propValue">Giá trị của property truyền vào</param>
+        /// <returns>
+        ///     -(bool)
+        ///     -True or False
+        /// </returns>
+        /// Created By: NTHIEU (14/06/2021)
+        public bool CheckDuplicate(string propName, string propValue, Entity entity);
+        #endregion
     }
 }

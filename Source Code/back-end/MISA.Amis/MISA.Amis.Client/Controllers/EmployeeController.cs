@@ -18,10 +18,18 @@ namespace MISA.Amis.Client.Controllers
     public class EmployeeController : BaseController<Employee>
     {
         #region Declare
+        /// <summary>
+        /// Đối tượng Service
+        /// </summary>
         IEmployeeService _employeeService;
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// Hàm khởi tạo
+        /// </summary>
+        /// <param name="p_employeeService"> Đối tượng service truyền vào</param>
+        /// <param name="baseService"> Đối tượng BaseService</param>
         public EmployeeController(IEmployeeService p_employeeService, IBaseService<Employee> baseService):base(baseService)
         {
             _employeeService = p_employeeService;
@@ -29,10 +37,55 @@ namespace MISA.Amis.Client.Controllers
         #endregion
 
         #region Get data
+        /// <summary>
+        /// Tìm kiếm phân trang dữ liệu nhân viên
+        /// </summary>
+        /// <param name="pageInt">Số thứ tự của trang</param>
+        /// <param name="pageSize">Số bản ghi / trang</param>
+        /// <param name="dataFilter">Giá trị cần tìm kiếm</param>
+        /// <returns>
+        /// - 200: Lấy dữ liệu thành công
+        /// - 400: Thông tin dữ liệu không hợp lệ
+        /// - 500: Lỗi Hệ thống
+        /// </returns>
+        /// Created By: NTHIEU (14/06/2021)
         [HttpGet("filter")]
         public async Task<IActionResult> GetEmployeesPagingFilter(int pageInt, int pageSize, string dataFilter )
         {
             var res = await _employeeService.GetEmployeesPagingFilter(pageInt, pageSize, dataFilter);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Lấy thông tin khởi tạo nhân viên mới
+        /// </summary>
+        /// <returns>
+        /// - 200: Thêm mới thành công
+        /// - 400: Thông tin dữ liệu không hợp lệ
+        /// - 500: Lỗi Hệ thống
+        /// </returns>
+        /// Created By: NTHIEU (14/06/2021)
+        [HttpGet("new")]
+        public async Task<IActionResult> GetNewEmployee()
+        {
+            var res = await _employeeService.GetNewEmployee();
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// Lấy thông tin Nhân bản nhân viên
+        /// </summary>
+        /// <param name="id">Khóa chính của Nhân viên cần lấy thông tin</param>
+        /// <returns>
+        /// - 200: Thêm mới thành công
+        /// - 400: Thông tin dữ liệu không hợp lệ
+        /// - 500: Lỗi Hệ thống 
+        /// </returns>
+        /// Created By: NTHIEU (14/06/2021)
+        [HttpGet("Duplicate/{id}")]
+        public async Task<IActionResult> GetDuplicateEmployee(Guid id)
+        {
+            var res = await _employeeService.GetDuplicateEmployee(id);
             return Ok(res);
         }
         #endregion

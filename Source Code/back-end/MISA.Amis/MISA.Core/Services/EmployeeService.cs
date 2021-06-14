@@ -20,6 +20,8 @@ namespace MISA.Core.Services
         {
             _employeeRepository = employeeRepository;
         }
+
+        
         #endregion
 
         #region Method Implement
@@ -49,6 +51,64 @@ namespace MISA.Core.Services
                 return res;
             }
 
+        }
+
+        public async Task<ActionServiceResult> GetNewEmployee()
+        {
+            var employee = new Employee();
+            employee.EmployeeCode = await _employeeRepository.GetNewEmployeeCode();
+            if (employee != null)
+            {
+                var res = new ActionServiceResult
+                {
+                    StatusCode = 200,
+                    UserMsg = "Load dữ liệu thành công",
+                    DevMsg = "Load dữ liệu thành công",
+                    Data = employee,
+                };
+                return res;
+            }
+            else
+            {
+                var res = new ActionServiceResult
+                {
+                    StatusCode = 200,
+                    UserMsg = "Load dữ liệu không thành công",
+                    DevMsg = "Load dữ liệu không thành công",
+                    Data = null,
+                };
+                return res;
+            }
+
+        }
+        public async Task<ActionServiceResult> GetDuplicateEmployee(Guid id)
+        {
+            var employee = await _employeeRepository.GetById(id);
+
+            //2. lấy mã code mới
+            employee.EmployeeCode = await _employeeRepository.GetNewEmployeeCode();
+            if (employee != null)
+            {
+                var res = new ActionServiceResult
+                {
+                    StatusCode = 200,
+                    UserMsg = "Load dữ liệu thành công",
+                    DevMsg = "Load dữ liệu thành công",
+                    Data = employee,
+                };
+                return res;
+            }
+            else
+            {
+                var res = new ActionServiceResult
+                {
+                    StatusCode = 200,
+                    UserMsg = "Load dữ liệu không thành công",
+                    DevMsg = "Load dữ liệu không thành công",
+                    Data = null,
+                };
+                return res;
+            }
         }
         #endregion
 
