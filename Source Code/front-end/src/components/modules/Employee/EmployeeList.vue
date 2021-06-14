@@ -1,6 +1,6 @@
 <template>
   <div class="employee-list">
-    <div class="loading" :class="{ displayNone: isDone }">
+    <div class="loading" :class="{ displayNone: EmployeeList.isDone }">
       <div class="modal"></div>
       <div class="lds-dual-ring"></div>
     </div>
@@ -12,7 +12,7 @@
     <div class="grid">
       <!-- #region 1. Grid-header -->
       <div class="grid-header">
-        <div class="mi icon-load pointer"></div>
+        <div class="mi icon-load" @click="loadGridContent"></div>
         <div class="input-search">
           <input type="text" placeholder="tìm kiếm theo mã, tên nhân viên" />
           <div class="mi icon-search pointer"></div>
@@ -62,11 +62,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="employee in employees" :key="employee.EmployeeId">
-                <!-- Check Box -->
+            <tr
+              v-for="employee in EmployeeList.employees"
+              :key="employee.EmployeeId"
+            >
+              <!-- Check Box -->
               <td class="checkbox">
-                <input type="checkbox" />
-                <label>
+                <input type="checkbox" :id="employee.EmployeeId" />
+                <label for="employee.EmployeeId">
                   <div class="mi custom-checkbox"></div>
                 </label>
                 <div class="border-right"></div>
@@ -123,8 +126,8 @@
               <option value="50">50 bản ghi trên 1 trang</option>
             </select>
           </div>
-          <!-- <paginate
-            :page-count="p_pageCount"
+          <paginate
+            :page-count="EmployeeList.pageCount"
             :click-handler="pageNumberOnClick"
             :prev-text="'Trước'"
             :next-text="'Sau'"
@@ -134,41 +137,59 @@
             :page-link-class="'page-link'"
             :page-class="'page-number'"
           >
-          </paginate> -->
+          </paginate>
         </div>
       </div>
       <!-- #endregion -->
     </div>
     <!-- #endregion -->
-  
-  
   </div>
 </template>
 
 <script>
+import Paginate from "vuejs-paginate";
 import axios from "axios";
 export default {
   name: "EmployeeList",
+  components: {
+    Paginate,
+  },
   data() {
     return {
-      employees: [],
-      isDone: true,
+      // Đối tượng EmployeeList
+      EmployeeList: {
+        employees: [],
+        isDone: true,
+        pageCount: 10,
+        pageInt: 1,
+        pageSize: 20,
+        filter: "",
+      },
     };
   },
   methods: {
+    //#region Các Sự kiện
+    //#endregion
+
+    //#region Method
+    /**
+     * <summary> Load Grid Content</summary>
+     * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
+     ********************************************************/
+    loadGridContent() {
+      this.loadDataPagingFilter(); //dữ liệu Phân trang
+    },
+
     /**
      * <summary> Load dữ liệu phân trang (Pagination)</summary>
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
     loadDataPagingFilter() {
-      this.isDone = false;
-      //   var p_pageInt = this.pageInt.toString();
-      //   var p_pageSize = this.pageSize.toString();
-      //   var p_filter = this.filter.toString();
-      var p_pageInt = 1;
-      var p_pageSize = 20;
-      var p_filter = null;
-      if (p_filter == null || p_filter == "") p_filter = "Vy";
+      this.EmployeeList.isDone = false;
+      var p_pageInt = this.EmployeeList.pageInt.toString();
+      var p_pageSize = this.EmployeeList.pageSize.toString();
+      var p_filter = this.EmployeeList.filter.toString();
+      if (p_filter == null || p_filter == "") p_filter = "H";
       var url =
         "http://localhost:60651/api/Employees/filter?pageint=" +
         p_pageInt +
@@ -179,14 +200,19 @@ export default {
       axios
         .get(url)
         .then((res) => {
-          this.employees = res.data.data;
-          this.isDone = true;
-          console.log(this.employees);
+          this.EmployeeList.employees = res.data.data;
+          this.EmployeeList.isDone = true;
         })
         .catch((res) => {
           console.log(res);
         });
     },
+
+    //Click vào pageNumber (Phân trang)
+    pageNumberOnClick(page) {
+      this.EmployeeList.pageInt = page;
+    },
+    //#endregion
   },
   created() {
     this.loadDataPagingFilter();
@@ -196,6 +222,7 @@ export default {
 
 <style lang="scss" scope>
 /* --------------------Layout------------------------- */
+//#region Grid Layout
 .title-distance {
   position: absolute;
   top: 0;
@@ -246,6 +273,8 @@ export default {
   box-sizing: border-box;
   /* border: 1px solid green; */
 }
+//#endregion
+
 /*---------------------- Các phần tử con của trang ---------------------------- */
 .pagination-bar {
   display: flex;
@@ -279,6 +308,7 @@ export default {
 }
 
 /* ---------------Table-------------------------------------------------------------- */
+//#region Table CSS
 table {
   width: 2180px;
   min-width: 100%;
@@ -379,33 +409,32 @@ th {
   align-items: center;
   justify-content: center;
 }
-.toggle-select {
-  display: none;
-  position: absolute;
-  background: #fff;
-  z-index: 1000;
-  top: 35px;
-  right: 35px;
-  width: 120px;
-  border: 1px solid #c7c7c7;
-  border-radius: 4px;
-}
-.toggle-selected {
-  display: block !important;
-}
-.toggle-select-item {
-  height: 30px;
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
-}
-.toggle-select-item:hover {
-  color: #13c128;
-  background-color: #e8e9ec;
-  cursor: pointer;
-}
+//#endregion
+
 
 /* -----------Các button, active, hover,input---------------------------- */
+input {
+  border: 1px solid #babec5;
+  border-radius: 4px;
+  width: 100%;
+  height: 32px;
+  padding-left: 16px;
+  padding-right: 32px;
+  box-sizing: border-box;
+  &:hover {
+    box-shadow: 0 0 5pt #d3d3d3;
+  }
+  &:focus {
+    outline-color: #2ca01c;
+  }
+}
+
+input::placeholder {
+  color: #babec5;
+  font-family: notosans-italic;
+  font-size: 12px;
+}
+
 input[type="checkbox"] {
   display: none;
 }
@@ -420,15 +449,18 @@ input[type="checkbox"] + label {
   cursor: pointer;
   margin: auto;
   background: #fff;
+  &:hover {
+    box-shadow: 0 0 5pt #d3d3d3;
+  }
 }
-input[type="checkbox"] + label:hover {
-  box-shadow: 0 0 5pt #d3d3d3;
-}
+
 input[type="checkbox"]:checked + label .custom-checkbox {
   background-position: -899px -316px;
   width: 11px;
   height: 8px;
 }
+
+//Paginate
 .disabled {
   cursor: none;
   color: #9e9e9e;
@@ -503,10 +535,13 @@ input[type="checkbox"]:checked + label .custom-checkbox {
   background-position: -425px -201px;
   width: 20px;
   height: 23px;
+  cursor: pointer;
+  &:hover {
+    background-position: -1098px -90px;
+  }
 }
-.icon-load:hover {
-  background-position: -1098px -90px;
-}
+
+
 .icon-search {
   background-position: -992px -360px;
   width: 16px;
@@ -528,6 +563,12 @@ input[type="checkbox"]:checked + label .custom-checkbox {
   width: 100%;
   height: 100%;
   z-index: 2000;
+}
+.modal{
+  background: #000;
+  opacity: 0.2;
+  width: 100%;
+  height: 100%;
 }
 .lds-dual-ring {
   position: absolute;
@@ -558,15 +599,7 @@ input[type="checkbox"]:checked + label .custom-checkbox {
     transform: rotate(360deg);
   }
 }
-.modal {
-  position: relative;
-  background: #000000;
-  opacity: 0.1;
-  width: 100%;
-  height: 100%;
-}
 .displayNone {
   display: none !important;
 }
-
 </style>
