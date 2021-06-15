@@ -39,7 +39,7 @@ namespace MISA.Infrastructure.Data
 
         public async Task<string> GetNewEmployeeCode()
         {
-            //1. Lấy Mã nhân viên lớn nhất
+            //1.Thực hiện truy vấn Lấy Mã nhân viên lớn nhất
             var employeeCodeMax = await dbConnection.QueryFirstOrDefaultAsync<string>("Proc_GetEmployeeCodeMax", commandType: CommandType.StoredProcedure);
 
             //2.  Tách lấy giá trị số trong chuỗi
@@ -71,6 +71,18 @@ namespace MISA.Infrastructure.Data
                 newEmployeeCode = "NV-" + newNumberCode.ToString();
             }
             return newEmployeeCode;
+        }
+
+        public async Task<int> GetTotalEmployeesFilter(string dataFilter)
+        {
+            //1. Truyền giá trị cho tham số đầu vào Store
+            _dynamicParameters.Add("@p_Filter", dataFilter);
+
+            //2. Thực hiện truy vấn lấy số lượng nhân viên tìm kiếm được
+            var totalEmployee = await dbConnection.QueryFirstOrDefaultAsync<int>("Proc_GetTotalEmployeesFilter", param:_dynamicParameters, commandType: CommandType.StoredProcedure);
+
+            //2. Kết quả trả về
+            return totalEmployee;
         }
         #endregion
 

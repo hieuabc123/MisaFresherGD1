@@ -14,7 +14,12 @@
       <div class="grid-header">
         <div class="mi icon-load" @click="loadGridContent"></div>
         <div class="input-search">
-          <input type="text" placeholder="tìm kiếm theo mã, tên nhân viên" />
+          <input
+            type="text"
+            placeholder="tìm kiếm theo mã, tên nhân viên"
+            v-model="EmployeeList.filter"
+            @input="onChangeInputFilter"
+          />
           <div class="mi icon-search pointer"></div>
         </div>
       </div>
@@ -35,23 +40,50 @@
                 <div class="border-right"></div>
               </th>
               <!-- Mã nhân viên -->
-              <th class="EmployeeCode">Mã nhân viên</th>
+              <th class="EmployeeCode">
+                Mã nhân viên
+                <div class="border-right"></div>
+              </th>
               <!-- Tên nhân viên -->
-              <th class="FullName">Tên nhân viên</th>
+              <th class="FullName">
+                Tên nhân viên
+                <div class="border-right"></div>
+              </th>
               <!-- Giới tính -->
-              <th class="Gender">Giới tính</th>
+              <th class="Gender">
+                Giới tính
+                <div class="border-right"></div>
+              </th>
               <!-- Ngày sinh -->
-              <th class="DateOfBirth">Ngày sinh</th>
+              <th class="DateOfBirth">
+                Ngày sinh
+                <div class="border-right"></div>
+              </th>
               <!-- Số CMT, CMND -->
-              <th class="IdentityNo">Số CMND</th>
+              <th class="IdentityNo">
+                Số CMND
+                <div class="border-right"></div>
+              </th>
               <!-- Chức danh -->
-              <th class="Position">Chức danh</th>
+              <th class="Position">
+                Chức danh
+                <div class="border-right"></div>
+              </th>
               <!-- Đơn vị -->
-              <th class="DepartmentName">Tên đơn vị</th>
+              <th class="DepartmentName">
+                Tên đơn vị
+                <div class="border-right"></div>
+              </th>
               <!-- Số tài khoản -->
-              <th class="AccountNumber">Số tài khoản</th>
+              <th class="AccountNumber">
+                Số tài khoản
+                <div class="border-right"></div>
+              </th>
               <!-- Tên Ngân hàng -->
-              <th class="BankName">Tên ngân hàng</th>
+              <th class="BankName">
+                Tên ngân hàng
+                <div class="border-right"></div>
+              </th>
               <!-- Chi nhánh ngân hàng -->
               <th class="BankBranch">Chi nhánh tk ngân hàng</th>
               <!-- Cột Chức năng -->
@@ -63,8 +95,12 @@
           </thead>
           <tbody>
             <tr
-              v-for="employee in EmployeeList.employees"
+              v-for="(employee, index) in EmployeeList.employees"
               :key="employee.EmployeeId"
+              :class="{
+                selected: EmployeeList.tr_selected_id == employee.employeeId,
+              }"
+              @click="trOnClick(employee.employeeId)"
             >
               <!-- Check Box -->
               <td class="checkbox">
@@ -100,7 +136,17 @@
               <td class="Function">
                 <div class="function-content">
                   <div class="btn-edit">Sửa</div>
-                  <div class="btn btn-toggle-select">
+                  <div
+                    class="btn btn-toggle-select"
+                    @click.stop.prevent="
+                      onClickToggleButton(
+                        index,
+                        FunctionDropdown.index_selecting
+                      )
+                    "
+                    :id="`row${index}`"
+                    v-click-outside="functionToggleClickOutSide"
+                  >
                     <div class="mi icon-toggle-select"></div>
                   </div>
                   <div class="border-left"></div>
@@ -115,11 +161,17 @@
       <!-- #region 3. Grid-Bottom -->
       <div class="grid-bottom pagination-bar">
         <div class="left-pagination">
-          <div class="total-record">Tổng số: <b>200</b> bản ghi</div>
+          <div class="total-record">
+            Tổng số: <b>{{ EmployeeList.total_employees }}</b> bản ghi
+          </div>
         </div>
         <div class="right-pagination">
           <div class="record-in-page">
-            <select class="record-in-page-value">
+            <select
+              class="record-in-page-value"
+              v-model="EmployeeList.pageSize"
+              @change="function(){ loadDataPagingFilter(); EmployeeList.pageInt = 1;}"
+            >
               <option value="10">10 bản ghi trên 1 trang</option>
               <option value="20">20 bản ghi trên 1 trang</option>
               <option value="30">30 bản ghi trên 1 trang</option>
@@ -129,6 +181,7 @@
           <paginate
             :page-count="EmployeeList.pageCount"
             :click-handler="pageNumberOnClick"
+            :force-page="EmployeeList.pageInt"
             :prev-text="'Trước'"
             :next-text="'Sau'"
             :container-class="'select-page'"
@@ -143,33 +196,152 @@
       <!-- #endregion -->
     </div>
     <!-- #endregion -->
+
+    <FunctionDropdown
+      v-if="FunctionDropdown.isOpen"
+      :left="FunctionDropdown.left"
+      :top="FunctionDropdown.top"
+      @onClickOutside="onClickOutside"
+      :is_click_out_side="FunctionDropdown.isClickOutSide"
+    />
+    <EmployeeDetail v-if="true" />
   </div>
 </template>
 
 <script>
 import Paginate from "vuejs-paginate";
 import axios from "axios";
+import FunctionDropdown from "./FunctionDropdown.vue";
+import vClickOutside from "v-click-outside";
+import EmployeeDetail from "./EmployeeDetail.vue";
 export default {
   name: "EmployeeList",
+  directives: {
+    clickOutside: vClickOutside.directive,
+  },
   components: {
     Paginate,
+    FunctionDropdown,
+    EmployeeDetail,
   },
   data() {
     return {
-      // Đối tượng EmployeeList
+      time_out: null,
+      //1. Đối tượng EmployeeList, đối tượng nhân viên cho component
       EmployeeList: {
-        employees: [],
-        isDone: true,
-        pageCount: 10,
-        pageInt: 1,
-        pageSize: 20,
-        filter: "",
+        employees: [], // danh sách các nhân viên
+        isDone: true, // Kiểm tra load dữ liệu xong chưa
+        pageCount: 1, // Tổng số trang
+        pageInt: 1, // Số thứ tự của trang
+        pageSize: 30, // Số bản ghi trên trang
+        filter: "", // Giá trị cần tìm kiếm (filter)
+        tr_selected_id: null, // Dòng nào đang được chọn (lấy id) or nhân viên có id đang được chọn
+        total_employees: 0, // đếm tổng số bản ghi
+      },
+      //2. Đối tượng Component Function Dropdown
+      FunctionDropdown: {
+        isOpen: false, // Kiểm tra mở đóng
+        left: 0, // vị trí căn lề bên trái
+        top: 0, // Vị trí căn lề bên phải
+        index_selecting: null, // giá trị trước khi click vào 1 đối tượng click toggle, (giá trị này sẽ được thay đổi sau khi click)
+        isClickOutSide: false,
       },
     };
   },
   methods: {
-    //#region Các Sự kiện
-    //#endregion
+    //#region Các sự kiện
+
+    //#region 1. Xử lý Sự kiện nút Toggle ở mục chức năng
+    //******************************************************************************************** */
+    /**
+     * Sự kiện khi click vào nút Toggle
+     *  param:{
+     *  - index : giá trị index truyền vào sau khi click
+     *  - index_selecting : giá trị hiện đang lựa chọn trước khi click
+     * }
+     * Created By: NTHIEU (15/06/2021)
+     */
+    onClickToggleButton(index, index_selecting) {
+      //0. Báo cho dropdown tự custom đây không phải là click out side
+      this.FunctionDropdown.isClickOutSide = false;
+      //1. Nếu giá trị trước khi truyền vào bằng giá trị sau khi truyền vào (Tức là click vào cùng 1 đối tượng liên tục)
+      if (index == index_selecting) {
+        //1.1 Thực hiện việc toggle
+        this.FunctionDropdown.isOpen = !this.FunctionDropdown.isOpen;
+      }
+      //2. Nếu giá trị trước khi truyền vào khác giá trị sau khi truyền vào (Tức là click vào đối tượng toogle khác)
+      else {
+        //2.1 Thực hiện việc mở dropdown
+        this.openFuntionDropdown();
+        //2.2 Gán giá trị sau khi click
+        this.FunctionDropdown.index_selecting = index;
+      }
+      //#region 3. Thực hiện việc lấy và gán vị trí của phần tử dropdown
+      // Gán id
+      var element = `#row${index}`;
+      //3.2 Gán đối tượng cần lấy vị trí
+      let position = document.querySelector(element);
+      //3.3 Lấy vị trí top và left
+      var left = position.getBoundingClientRect().left - 180 - 90;
+      var top = position.getBoundingClientRect().top - 48 + 20;
+      this.FunctionDropdown.left = left;
+      this.FunctionDropdown.top = top;
+      //3.4 Kiểm tra nếu vị trí ở bên dưới quá thì đổi vị trí cho thằng dropdown lên trên
+      if (top > 600) {
+        this.FunctionDropdown.top -= 115;
+      }
+      //#endregion
+    },
+
+    /**
+     * Mở Dropdown
+     * Created By: NTHIEU (15/06/2021)
+     */
+    openFuntionDropdown() {
+      this.FunctionDropdown.isOpen = true;
+    },
+
+    /**
+     * Đóng Dropdown: NTHIEU (15/06/2021)
+     * Created BY: NTHIEU (15/06/2021)
+     */
+    closeFunctionDropdown() {
+      this.FunctionDropdown.isOpen = false;
+    },
+
+    /**
+     * Click ra ngoài cả 2 phần tử toggle và dropdown
+     * Created By: NTHIEU (15/06/2021)
+     */
+    onClickOutside() {
+      this.closeFunctionDropdown();
+    },
+
+    /**
+     * Click ra ngoài mỗi phần tử Toggle thôi
+     * Created By: NTHIEU (15/06/2021)
+     */
+    functionToggleClickOutSide() {
+      // Báo cho Thằng Dropdown là tao đã bị click ra ngoài rồi để dropdown kiểm tra xem có click ra ngoài nữa không
+      this.FunctionDropdown.isClickOutSide = true;
+    },
+    //#endregion Sự kiện nút Toggle ở mục chức năng
+
+    //#region 2. Xử lý Sự kiện input tìm kiếm
+    onChangeInputFilter() {
+      this.EmployeeList.pageInt = 1;
+      clearTimeout(this.time_out);
+      this.time_out = setTimeout(this.loadDataPagingFilter, 500);
+    },
+    //#endregion 2
+
+    //#region 3 Sự kiện click vào từng dòng trong table
+    trOnClick(id) {
+      this.EmployeeList.tr_selected_id = id;
+    },
+    //#endregion 3
+
+    //#endregion Các sự kiện
 
     //#region Method
     /**
@@ -189,7 +361,6 @@ export default {
       var p_pageInt = this.EmployeeList.pageInt.toString();
       var p_pageSize = this.EmployeeList.pageSize.toString();
       var p_filter = this.EmployeeList.filter.toString();
-      if (p_filter == null || p_filter == "") p_filter = "H";
       var url =
         "http://localhost:60651/api/Employees/filter?pageint=" +
         p_pageInt +
@@ -200,8 +371,20 @@ export default {
       axios
         .get(url)
         .then((res) => {
-          this.EmployeeList.employees = res.data.data;
+          if (res.data.data != null) {
+            this.EmployeeList.employees = res.data.data.employees;
+            this.EmployeeList.total_employees = res.data.data.total;
+          } else {
+            this.EmployeeList.employees = null;
+            this.EmployeeList.total_employees = 0;
+          }
+
           this.EmployeeList.isDone = true;
+
+          this.EmployeeList.pageCount = Math.ceil(
+            parseInt(this.EmployeeList.total_employees) /
+              parseInt(this.EmployeeList.pageSize)
+          ); // Tính số trang = tổng số bản ghi / pageSize
         })
         .catch((res) => {
           console.log(res);
@@ -211,11 +394,12 @@ export default {
     //Click vào pageNumber (Phân trang)
     pageNumberOnClick(page) {
       this.EmployeeList.pageInt = page;
+      this.loadGridContent();
     },
     //#endregion
   },
   created() {
-    this.loadDataPagingFilter();
+    this.loadGridContent();
   },
 };
 </script>
@@ -320,6 +504,27 @@ tr {
   border-bottom: 1px solid #c7c7c7;
   /* box-sizing: border-box; */
 }
+
+thead tr {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  th {
+    position: relative;
+  }
+  .border-right {
+    border-right: 1px solid #c7c7c7;
+  }
+  .border-left {
+    border-left: 1px solid #c7c7c7;
+  }
+  .checkbox,
+  .Function {
+    top: 0;
+    z-index: 2;
+  }
+}
 tbody tr:hover td {
   background: #f3f8f8;
 }
@@ -399,7 +604,7 @@ th {
   right: -1px;
   top: 0;
   bottom: 0;
-  border-left: 1px dotted #c7c7c7;
+  border-right: 1px dotted #c7c7c7;
   box-sizing: border-box;
 }
 .function-content {
@@ -410,7 +615,6 @@ th {
   justify-content: center;
 }
 //#endregion
-
 
 /* -----------Các button, active, hover,input---------------------------- */
 input {
@@ -541,7 +745,6 @@ input[type="checkbox"]:checked + label .custom-checkbox {
   }
 }
 
-
 .icon-search {
   background-position: -992px -360px;
   width: 16px;
@@ -564,7 +767,7 @@ input[type="checkbox"]:checked + label .custom-checkbox {
   height: 100%;
   z-index: 2000;
 }
-.modal{
+.modal {
   background: #000;
   opacity: 0.2;
   width: 100%;

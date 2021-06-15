@@ -33,6 +33,15 @@ namespace MISA.Core.Interfaces.Infrastructures
         /// (String) Mã nhân viên
         /// </returns>
         Task<string> GetNewEmployeeCode();
+
+        /// <summary>
+        /// Đếm tổng số lượng nhân viên tìm kiếm được
+        /// </summary>
+        /// <param name="DataFilter">Giá trị cần tìm kiếm</param>
+        /// <returns>
+        /// (int) số lượng nhân viên
+        /// </returns>
+        Task<int> GetTotalEmployeesFilter(string DataFilter);
         #endregion
     }
 }

@@ -28,6 +28,7 @@ namespace MISA.Core.Services
         public async Task<ActionServiceResult> GetEmployeesPagingFilter(int pageIndex, int pageSize, string dataFilter)
         {
             var employees = await _employeeRepository.GetEmployeePagingFilter(pageIndex, pageSize, dataFilter);
+            var totalEmployees = await _employeeRepository.GetTotalEmployeesFilter(dataFilter);
             if (employees.Count() > 0)
             {
                 var res = new ActionServiceResult
@@ -35,7 +36,10 @@ namespace MISA.Core.Services
                     StatusCode = 200,
                     UserMsg = "Load dữ liệu thành công",
                     DevMsg = "Load dữ liệu thành công",
-                    Data = employees,
+                    Data = new {
+                        employees = employees,
+                        total = totalEmployees
+                    }
                 };
                 return res;
             }

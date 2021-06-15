@@ -170,3 +170,21 @@
 }
 
 // #endregion
+// #region icon trong dialog
+.icon-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    background-position: -144px -144px;
+    cursor: pointer;
+}
+
+.icon-question {
+    background-position: -89px -144px;
+    position: absolute;
+    right: 38px;
+    top: 8px;
+    cursor: pointer;
+}
+
+// #endregion
