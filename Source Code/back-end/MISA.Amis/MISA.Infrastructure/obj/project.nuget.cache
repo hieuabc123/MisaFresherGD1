@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "06eZk860dvYe662Mk84BdpAZ7EnfnrJCrV/WvyLXA3bEdgEgXhyu1Cokj74K1A8Ma6CBJZ2oFf8gD1iOSZxnHA==",
+  "dgSpecHash": "PFTVdz7iU6ONy8yqizaZHdofDoo0tsOFZCwQC6btgYk8CkfsFC64LuUcaRtkPAzeVUuND6kfP0LktrDTn34A9A==",
   "success": true,
-  "projectFilePath": "D:\\Nthieu Dep zai\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
+  "projectFilePath": "E:\\Misa\\Misa fresher\\Đanh gia\\MisaFresherGD1\\Source Code\\back-end\\MISA.Amis\\MISA.Infrastructure\\MISA.Infrastructure.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\nthieu\\.nuget\\packages\\dapper\\2.0.90\\dapper.2.0.90.nupkg.sha512",
-    "C:\\Users\\nthieu\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\5.0.0\\microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
-    "C:\\Users\\nthieu\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512",
-    "C:\\Users\\nthieu\\.nuget\\packages\\mysqlconnector\\1.3.9\\mysqlconnector.1.3.9.nupkg.sha512"
+    "C:\\Users\\trung\\.nuget\\packages\\dapper\\2.0.90\\dapper.2.0.90.nupkg.sha512",
+    "C:\\Users\\trung\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\5.0.0\\microsoft.extensions.configuration.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\trung\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512",
+    "C:\\Users\\trung\\.nuget\\packages\\mysqlconnector\\1.3.9\\mysqlconnector.1.3.9.nupkg.sha512"
   ],
   "logs": []
 }

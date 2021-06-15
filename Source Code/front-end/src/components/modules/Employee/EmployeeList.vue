@@ -167,16 +167,7 @@
         </div>
         <div class="right-pagination">
           <div class="record-in-page">
-            <select
-              class="record-in-page-value"
-              v-model="EmployeeList.pageSize"
-              @change="function(){ loadDataPagingFilter(); EmployeeList.pageInt = 1;}"
-            >
-              <option value="10">10 bản ghi trên 1 trang</option>
-              <option value="20">20 bản ghi trên 1 trang</option>
-              <option value="30">30 bản ghi trên 1 trang</option>
-              <option value="50">50 bản ghi trên 1 trang</option>
-            </select>
+            <Combobox/>
           </div>
           <paginate
             :page-count="EmployeeList.pageCount"
@@ -196,16 +187,16 @@
       <!-- #endregion -->
     </div>
     <!-- #endregion -->
-
     <FunctionDropdown
       v-if="FunctionDropdown.isOpen"
-      :left="FunctionDropdown.left"
+      :right="FunctionDropdown.right"
       :top="FunctionDropdown.top"
       @onClickOutside="onClickOutside"
       :is_click_out_side="FunctionDropdown.isClickOutSide"
     />
-    <EmployeeDetail v-if="true" />
+    <EmployeeDetail v-if="false" />
   </div>
+
 </template>
 
 <script>
@@ -214,6 +205,7 @@ import axios from "axios";
 import FunctionDropdown from "./FunctionDropdown.vue";
 import vClickOutside from "v-click-outside";
 import EmployeeDetail from "./EmployeeDetail.vue";
+import Combobox from '../../Items/Combobox.vue';
 export default {
   name: "EmployeeList",
   directives: {
@@ -223,6 +215,7 @@ export default {
     Paginate,
     FunctionDropdown,
     EmployeeDetail,
+    Combobox,
   },
   data() {
     return {
@@ -241,7 +234,7 @@ export default {
       //2. Đối tượng Component Function Dropdown
       FunctionDropdown: {
         isOpen: false, // Kiểm tra mở đóng
-        left: 0, // vị trí căn lề bên trái
+        right: 0, // vị trí căn lề bên trái
         top: 0, // Vị trí căn lề bên phải
         index_selecting: null, // giá trị trước khi click vào 1 đối tượng click toggle, (giá trị này sẽ được thay đổi sau khi click)
         isClickOutSide: false,
@@ -281,10 +274,10 @@ export default {
       var element = `#row${index}`;
       //3.2 Gán đối tượng cần lấy vị trí
       let position = document.querySelector(element);
-      //3.3 Lấy vị trí top và left
-      var left = position.getBoundingClientRect().left - 180 - 90;
+      //3.3 Lấy vị trí top và right
+      var right = 170;
       var top = position.getBoundingClientRect().top - 48 + 20;
-      this.FunctionDropdown.left = left;
+      this.FunctionDropdown.right = right;
       this.FunctionDropdown.top = top;
       //3.4 Kiểm tra nếu vị trí ở bên dưới quá thì đổi vị trí cho thằng dropdown lên trên
       if (top > 600) {
@@ -341,6 +334,16 @@ export default {
     },
     //#endregion 3
 
+    //#region 4 Sự kiện click vào paginate (phân trang)
+    /**
+     * Click vào pageNumber (Phân trang)
+     * Created By: NTHIEU (15/06/2021)
+     **********************************/
+    pageNumberOnClick(page) {
+      this.EmployeeList.pageInt = page;
+      this.loadGridContent();
+    },
+    //#endregion 4
     //#endregion Các sự kiện
 
     //#region Method
@@ -353,7 +356,7 @@ export default {
     },
 
     /**
-     * <summary> Load dữ liệu phân trang (Pagination)</summary>
+     * <summary> Load dữ liệu tìm kiếm phân trang (Pagination)</summary>
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
     loadDataPagingFilter() {
@@ -391,11 +394,9 @@ export default {
         });
     },
 
-    //Click vào pageNumber (Phân trang)
-    pageNumberOnClick(page) {
-      this.EmployeeList.pageInt = page;
-      this.loadGridContent();
-    },
+    
+
+
     //#endregion
   },
   created() {
@@ -407,6 +408,13 @@ export default {
 <style lang="scss" scope>
 /* --------------------Layout------------------------- */
 //#region Grid Layout
+.employee-list{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 .title-distance {
   position: absolute;
   top: 0;
@@ -506,12 +514,10 @@ tr {
 }
 
 thead tr {
-  position: sticky;
-  top: 0;
   z-index: 1;
-
   th {
-    position: relative;
+    position: sticky;
+    top: 0;
   }
   .border-right {
     border-right: 1px solid #c7c7c7;

@@ -1,8 +1,8 @@
 <template>
-  <div class="function">
+  <div class="function" :style="{ right: right + 'px', top: top + 'px' }">
     <div
       class="function-content"
-      :style="{ left: left + 'px', top: top + 'px' }"
+      
       v-click-outside="onFocusOut"
     >
       <div class="function-item" @click="test">Nhân bản</div>
@@ -20,7 +20,7 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   props: {
-    left: {
+    right: {
       default: 0,
     },
     top: {

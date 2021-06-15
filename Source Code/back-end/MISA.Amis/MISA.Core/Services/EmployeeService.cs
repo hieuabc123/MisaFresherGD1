@@ -15,6 +15,7 @@ namespace MISA.Core.Services
         #region Declare
         IEmployeeRepository _employeeRepository;
         #endregion
+
         #region Constructor
         public EmployeeService(IEmployeeRepository employeeRepository) : base(employeeRepository)
         {
