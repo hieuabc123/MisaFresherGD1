@@ -41,6 +41,7 @@
                   ref="employeeCode"
                   v-model="p_employee.employeeCode"
                   @mouseover="hoverInEmployeeCode"
+                  @mouseleave="required.event.is_hover = false"
                   :class="{'validate': !required.employeeCode.check}"
                 />
               </div>
@@ -55,6 +56,7 @@
                   type="text"
                   v-model="p_employee.fullName"
                   @mouseover="hoverInFullName"
+                  @mouseleave="required.event.is_hover = false"
                   :class="{'validate': !required.fullName.check}"
                 />
               </div>
@@ -64,7 +66,7 @@
                 Đơn vị
                 <div style="color: red; padding-left: 4px">&nbsp; *</div>
               </div>
-              <div class="input" @mouseover="hoverInDepartment">
+              <div class="input" @mouseover="hoverInDepartment" @mouseleave="required.event.is_hover = false">
                 <AutoComplete
                   :options="departments"
                   :value_key="'departmentId'"
@@ -227,7 +229,6 @@
       </div>
     </div>
     <div
-      id="requiredEmployeeCode"
       class="required"
       :style="{
         left: +position_required.left + 'px',
@@ -310,7 +311,6 @@ export default {
       if(this.required.employeeCode.check == false){
         this.required.event.message = this.required.employeeCode.message;
         this.getPositionOfMouse(event);
-        this.required.event.is_hover = true;
       }
       else this.required.event.is_hover = false;
     },
@@ -323,7 +323,7 @@ export default {
       if(this.required.fullName.check == false){
         this.required.event.message = this.required.fullName.message;
         this.getPositionOfMouse(event);
-        this.required.event.is_hover = true;
+        
       }
       else this.required.event.is_hover = false;
       
@@ -337,7 +337,6 @@ export default {
       if(this.required.departmentId.check == false){
         this.required.event.message = this.required.departmentId.message;
         this.getPositionOfMouse(event);
-        this.required.event.is_hover = true;
       }
       else this.required.event.is_hover = false;
     },
@@ -352,6 +351,7 @@ export default {
       this.time_out = setTimeout(function () {
         vue.position_required.left = event.clientX + 5;
         vue.position_required.top = event.clientY + 5;
+        vue.required.event.is_hover = true;
       }, 700);
     },
     //#endregion 1

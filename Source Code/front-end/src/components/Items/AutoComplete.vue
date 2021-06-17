@@ -243,6 +243,9 @@ export default {
       if (this.label_value !=null && this.label_value != "" && is_availble == false) {
         this.$emit("update:model_value", "not_availble")// eslint-disable-line no-debugger
       }
+      else if (this.label_value == null || this.label_value == ""){
+        this.$emit("update:model_value", null)
+      }
       this.isShow = false;
       this.index_Selecting = -1;
     },
