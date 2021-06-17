@@ -14,6 +14,7 @@
         @click="FilterData"
         @input="FilterData"
         ref="focusInput"
+        :class="validate_class"
       />
       <div class="icon-item" @click="ToggleOnClick">
         <div class="icon-toggle"></div>
@@ -34,6 +35,7 @@
       >
         {{ item[label_key] }}
       </div>
+      <div class="empty" v-if="is_empty">Không có dữ liệu hiển thị</div>
     </div>
   </div>
 </template>
@@ -46,8 +48,10 @@ export default {
   },
   name: "autocomplete",
   props: {
-    // Giá trị mặc định
-    defaultValue: {
+    /**
+     * Value
+     */
+    model_value: {
       default: null,
     },
     // Key (propertype) của Value muốn lấy
@@ -67,18 +71,35 @@ export default {
       type: Array,
       default: null,
     },
+    validate_class:{
+      default:"",
+    }
   },
-
+  watch: {
+    // options(){
+    //   this.GetDefaultValue();
+    // },
+    // model_value(){
+    //   this.GetDefaultValue();
+    // }
+  },
   data() {
-    return { 
+    return {
       option_selected: null, // Option nào đang được chọn
       isShow: false, // Ẩn hiện Options
       index_Selecting: -1, // Chỉ số (STT) của thằng đang được chọn
       label_value: null, // Label Text value (Giá trị hiển thị của thằng đang được chọn)
       data_filter: [], // Mảng tìm kiếm
+      is_empty: false,
     };
   },
-
+  // watch:{
+  //   model_value(){
+  //     // debugger // eslint-disable-line no-debugger
+  //     console.log(this.model_value);
+  //     this.GetDefaultValue();
+  //   }
+  // },
   methods: {
     //#region 1. Xử lý các sự kiện
     /**
@@ -117,6 +138,7 @@ export default {
       this.data_filter = this.options;
       this.isShow = !this.isShow;
       this.$refs.focusInput.focus();
+      this.is_empty = false;
     },
 
     /**
@@ -125,13 +147,12 @@ export default {
      */
     EnterOnPress() {
       // debugger // eslint-disable-line no-debugger
-      if(this.index_Selecting == -1){
+      if (this.index_Selecting == -1) {
         this.GetDefaultValue();
-      }
-      else{
+      } else {
         this.SetValue(this.data_filter[this.index_Selecting]);
       }
-      
+
       this.HideOptions();
     },
 
@@ -155,9 +176,11 @@ export default {
      * Created By: NTHIEU (07/06/2021)
      */
     SetValue(val) {
-      this.$emit("input", this.GetValue(val));
-      this.label_value = val[this.label_key];
-      this.option_selected = val[this.value_key];
+      if (val != null) {
+        this.$emit("update:model_value", this.GetValue(val));
+        this.label_value = val[this.label_key];
+        this.option_selected = val[this.value_key];
+      }
     },
 
     /**
@@ -171,12 +194,14 @@ export default {
       this.data_filter = this.options;
 
       //2. Lấy giá trị mặc định
-      this.data_filter.forEach((option) => {
-        if (option[this.value_key] == this.defaultValue) {
-          this.label_value = option[this.label_key];
-          this.option_selected = option[this.value_key];
-        }
-      });
+      if (this.data_filter != null)
+        this.data_filter.forEach((option) => {
+          if (option[this.value_key] == this.model_value) {
+            this.label_value = option[this.label_key];
+            this.option_selected = option[this.value_key];
+          }
+        });
+      // debugger // eslint-disable-line no-debugger
     },
 
     /**
@@ -209,6 +234,15 @@ export default {
      */
     HideOptions() {
       // debugger // eslint-disable-line no-debugger
+      var is_availble = false;
+      this.options.forEach((option) => {
+        if (option[this.label_key] == this.label_value) {
+          is_availble = true;
+        }
+      });
+      if (this.label_value !=null && this.label_value != "" && is_availble == false) {
+        this.$emit("update:model_value", "not_availble")// eslint-disable-line no-debugger
+      }
       this.isShow = false;
       this.index_Selecting = -1;
     },
@@ -223,16 +257,23 @@ export default {
       //2. Hiển thị Options
       this.ShowOptions();
       //3. Nếu Trống Thì hiển thị tất cả
-      if (this.label_value.length == 0) {
-        this.data_filter = this.options;
+      if (this.label_value != null) {
+        if (this.label_value.length == 0) {
+          this.data_filter = this.options;
+        } else {
+          this.data_filter = this.options.filter(
+            (e) =>
+              e[this.label_key]
+                .toLowerCase()
+                .indexOf(this.label_value.toLowerCase()) != -1
+          );
+        }
       } else {
-        this.data_filter = this.options.filter(
-          (e) =>
-            e[this.label_key]
-              .toLowerCase()
-              .indexOf(this.label_value.toLowerCase()) != -1
-        );
+        this.data_filter = this.options;
       }
+      if (this.data_filter.length == 0) {
+        this.is_empty = true;
+      } else this.is_empty = false;
     },
     //#endregion
 
@@ -242,6 +283,10 @@ export default {
   },
   created() {
     this.GetDefaultValue();
+  },
+  mounted() {
+    // this.GetDefaultValue();
+    // console.log(this.model_value);
   },
 };
 </script>
@@ -258,11 +303,11 @@ $height: 32px;
 // Background Default:
 $background-default: #ffffff;
 // Background Hover:
-$background-hover: #ccc;
+$background-hover: #f4f5f6;
 // Màu chữ default:
 $color-default: #000000;
 // Màu chữ hover:
-$color-hover: #000;
+$color-hover: #2ca01c;
 // border chung
 $border: 1px solid #babec5;
 // border khi focus vào
@@ -340,7 +385,7 @@ $icon-toggle: url("");
       border-bottom-right-radius: 3px;
       @include Flex-Center;
       @include Size(30px, 100%);
-      &:hover{
+      &:hover {
         background: #e0e0e0;
       }
       .icon-toggle {
@@ -353,10 +398,11 @@ $icon-toggle: url("");
   .select-options {
     position: absolute;
     @include Size(100%, auto);
-    top: $height;
+    top: $height + 2px;
     left: -1px;
     background: $background-default;
     border-radius: 4px;
+    z-index: 10;
     // max-height: 250px;
     // overflow-y: auto;
     border: $border-focus;
@@ -365,6 +411,7 @@ $icon-toggle: url("");
     .option {
       @include Size(100%, $height);
       @include Flex-Center;
+      border-radius: 3px;
       color: $color-default;
       &:hover {
         background: $background-hover;
@@ -376,11 +423,21 @@ $icon-toggle: url("");
       background: $background-hover;
       color: $color-hover;
     }
+    .empty {
+      @include Size(100%, $height);
+      @include Flex-Center;
+      background: #f7f7f7;
+      border-radius: 3px;
+    }
   }
 }
 
 .selected {
-  background-color: 1px solid #2ca01c !important;
+  background-color: #2ca01c !important;
   color: #fff !important;
+}
+
+.validate{
+  border-color: red !important;
 }
 </style>

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MISA.Core.Entities.Directory;
+using MISA.Core.Exceptions;
 using MISA.Core.Interfaces.Infrastructures;
 using MISA.Core.Interfaces.Services;
 using MISA.Core.Services;
@@ -48,6 +49,9 @@ namespace MISA.Amis.Client
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MISA.Amis.Client", Version = "v1" });
             });
+
+            // Use exceptions to modify the response
+            services.AddControllers(options => options.Filters.Add(new HttpResponseExceptionFilter()));
 
             // Config DI:
             // 1. Base:

@@ -107,7 +107,6 @@ export default {
     ToggleOnClick() {
       this.data_filter = this.options;
       this.isShow = !this.isShow;
-      this.$refs.focusInput.focus();
     },
     /**
      * Sự kiện Press vào Enter
@@ -152,6 +151,7 @@ export default {
       this.data_filter = this.options;
 
       //2. Lấy giá trị mặc định
+      if(this.options!=null)
       this.data_filter.forEach((option) => {
         if (option[this.value_key] == this.defaultValue) {
           this.label_value = option[this.label_key];

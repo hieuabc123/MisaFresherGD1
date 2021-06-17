@@ -2,6 +2,7 @@
 using MISA.Core.Entities.Base;
 using MISA.Core.Interfaces.Infrastructures;
 using MISA.Core.Interfaces.Services;
+using MISA.Core.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,8 @@ namespace MISA.Core.Services
 
         public async virtual Task<ActionServiceResult> InsertData(Entity entity)
         {
-            if (Validate(entity)==true)
+            
+            if (Validate(entity, null)==true)
             {
                 return new ActionServiceResult
                 {
@@ -71,8 +73,8 @@ namespace MISA.Core.Services
                 return new ActionServiceResult
                 {
                     StatusCode = 402,
-                    UserMsg = "Dữ liệu không hợp lệ",
-                    DevMsg = "Dữ liệu không hợp lệ",
+                    UserMsg = entity.Status,
+                    DevMsg = entity.Status,
                     Data = null
                 };
             }
@@ -80,7 +82,7 @@ namespace MISA.Core.Services
 
         public async virtual Task<ActionServiceResult> UpdateData(Entity entity, Guid id)
         {
-            if (Validate(entity) == true)
+            if (Validate(entity, id) == true)
             {
                 return new ActionServiceResult
                 {
@@ -112,10 +114,16 @@ namespace MISA.Core.Services
         /// - true: Dữ liệu hợp lệ
         /// - false: Dữ liệu không hợp lệ
         /// </returns>
-        public virtual bool Validate(Entity entity)
+        public virtual bool Validate(Entity entity, Guid? id)
         {
-            var isValid = CheckNullorEmpty(entity);
-            //var isValid = CheckDuplicateInDataBase(entity);
+            var isValid = false;
+            var checkNull = CheckNullorEmpty(entity);
+            var checkDuplicate = CheckDuplicateInDataBase(entity,id);
+            if (checkNull == true && checkDuplicate == true)
+            {
+                isValid = true;
+            }
+            else isValid = false;
             return isValid;
         }
 
@@ -154,15 +162,19 @@ namespace MISA.Core.Services
                 //3.5 Nếu có trường Required (Check Trống)
                 if (attributeRequired.Length > 0)
                 {
-                    var msg = (attributeRequired[0] as Required).Msg;
                     if ((propType == typeof(Guid?) || propType == Nullable.GetUnderlyingType(typeof(Guid?))) && propValue == null )
                     {
-                        entity.Status += $"{msg}";
+                        entity.Status = string.Format(Resources.error_null,propName);
+                        isValid = false;
+                    }
+                    else if ((propType == typeof(string) || propType == Nullable.GetUnderlyingType(typeof(string))) && propValue == null)
+                    {
+                        entity.Status = string.Format(Resources.error_null, propName);
                         isValid = false;
                     }
                     else if (string.IsNullOrEmpty(propValue.ToString())|| propValue == null)
                     {
-                        entity.Status = msg;
+                        entity.Status = string.Format(Resources.error_null, propName);
                         isValid = false;
                     }
                 }
@@ -181,7 +193,7 @@ namespace MISA.Core.Services
         ///     -True or False
         /// </returns>
         /// Created By: NTHIEU (14/06/2021)
-        public bool CheckDuplicateInDataBase(Entity entity)
+        public bool CheckDuplicateInDataBase(Entity entity, Guid? id)
         {
             var isValid = true;
             //1. Lấy toàn bộ property của entity
@@ -205,13 +217,13 @@ namespace MISA.Core.Services
                 //2.5 Kiểm tra nếu có attribute thì thực hiện công việc
                 if (attributeRCheckDuplicateDB.Length > 0 && propValue != null)
                 {
-                    var msg = (attributeRCheckDuplicateDB[0] as CheckDuplicateDB).Msg;
+                    //var msg = (attributeRCheckDuplicateDB[0] as CheckDuplicateDB).Msg;
 
-                    var isExists = _baseRepository.CheckDuplicate(propName, propValue.ToString(), entity);
+                    var isExists = _baseRepository.CheckDuplicate(propName, propValue.ToString(), id);
                     if (isExists == true)
                     {
                         isValid = false;
-                        entity.Status += $"\n{msg}";
+                        entity.Status = string.Format(Properties.Resources.error_duplicate, propName, propValue);
                     }
                 }
             };

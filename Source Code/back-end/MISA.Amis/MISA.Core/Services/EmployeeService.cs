@@ -48,9 +48,9 @@ namespace MISA.Core.Services
             {
                 var res = new ActionServiceResult
                 {
-                    StatusCode = 200,
-                    UserMsg = "Load dữ liệu thành công",
-                    DevMsg = "Load dữ liệu thành công",
+                    StatusCode = 202,
+                    UserMsg = "Không có dữ liệu",
+                    DevMsg = "Không có dữ liệu",
                     Data = null,
                 };
                 return res;
@@ -77,9 +77,9 @@ namespace MISA.Core.Services
             {
                 var res = new ActionServiceResult
                 {
-                    StatusCode = 200,
-                    UserMsg = "Load dữ liệu không thành công",
-                    DevMsg = "Load dữ liệu không thành công",
+                    StatusCode = 202,
+                    UserMsg = "Không có dữ liệu",
+                    DevMsg = "Không có dữ liệu",
                     Data = null,
                 };
                 return res;

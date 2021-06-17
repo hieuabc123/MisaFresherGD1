@@ -5,7 +5,7 @@
       
       v-click-outside="onFocusOut"
     >
-      <div class="function-item" @click="test">Nhân bản</div>
+      <div class="function-item" @click="duplicateOnClick()">Nhân bản</div>
       <div class="function-item">Xóa</div>
       <div class="function-item">Ngưng Sử Dụng</div>
     </div>
@@ -20,6 +20,9 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   props: {
+    id:{
+      default:null,
+    },
     right: {
       default: 0,
     },
@@ -36,8 +39,9 @@ export default {
       if(this.is_click_out_side ==true)
       this.$emit("onClickOutside");
     },
-    test(){
-      alert(1)
+    duplicateOnClick(){
+      this.$emit("duplicateOnClick",this.id);
+      this.$emit("onClickOutside");
     }
   },
   mounted() {

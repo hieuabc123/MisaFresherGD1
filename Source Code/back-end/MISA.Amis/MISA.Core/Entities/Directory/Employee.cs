@@ -12,7 +12,7 @@ namespace MISA.Core.Entities.Directory
     /// Thông tin Đối tượng nhân viên
     /// </summary>
     /// Created By: NTHIEU (12/6/2021)
-    public class Employee:BaseEntity
+    public class Employee : BaseEntity
     {
         /// <summary>
         /// Khoá chính
@@ -34,9 +34,13 @@ namespace MISA.Core.Entities.Directory
 
         /// <summary>
         /// Giới tính
+        /// 0- Nữ
+        /// 1- Nam
+        /// 2- Khác
         /// </summary>
         public int Gender { get; set; }
-        
+
+
         /// <summary>
         /// Ngày sinh
         /// </summary>
@@ -72,7 +76,7 @@ namespace MISA.Core.Entities.Directory
         /// Số tài khoản Ngân Hàng
         /// </summary>
         public string AccountNumber { get; set; }
-        
+
         /// <summary>
         /// Tên ngân hàng
         /// </summary>
@@ -104,7 +108,31 @@ namespace MISA.Core.Entities.Directory
         public string Email { get; set; }
 
         #region NotMap
-        public string GenderName { get; set; }
+        /// <summary>
+        /// Tên Giới tính
+        /// </summary>
+        public string GenderName
+        {
+            get
+            {
+                var name = string.Empty;
+                switch ((Enum.Gender)Gender)
+                {
+                    case Enum.Gender.Male:
+                        name = "Nam";
+                        break;
+                    case Enum.Gender.Female:
+                        name = "Nữ";
+                        break;
+                    case Enum.Gender.Other:
+                        name = "Khác";
+                        break;
+                    default: break;
+                }
+                return name;
+            }
+            
+        }
         public string DepartmentName { get; set; }
         public string DepartmentCode { get; set; }
         #endregion

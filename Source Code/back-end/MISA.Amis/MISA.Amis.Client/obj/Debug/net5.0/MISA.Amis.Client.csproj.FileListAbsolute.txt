@@ -68,3 +68,6 @@ D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\obj\Debug\net5.0\ref\MISA.Amis.Client.dll
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\obj\Debug\net5.0\MISA.Amis.Client.pdb
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\obj\Debug\net5.0\MISA.Amis.Client.genruntimeconfig.cache
+D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Microsoft.DotNet.PlatformAbstractions.dll
+D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
+D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Newtonsoft.Json.dll

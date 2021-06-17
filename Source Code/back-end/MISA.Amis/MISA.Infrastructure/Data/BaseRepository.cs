@@ -90,8 +90,8 @@ namespace MISA.Infrastructure.Data
             //1. Gán giá trị đầu vào cho tham số trong StoreProceduce
             _dynamicParameters.Add($"@p_{_entityName}Id", id);
 
-            //2. Thực hiện truy vấn lấy dữ liệu trên DB
-            var entity = await dbConnection.QueryFirstOrDefaultAsync<Entity>($"Proc_Get{_entityName}s", commandType: CommandType.StoredProcedure);
+            //2. Thực hiện truy vấn lấy dữ liệu trên DBs
+            var entity = await dbConnection.QueryFirstOrDefaultAsync<Entity>($"Proc_Get{_entityName}ById",param:_dynamicParameters, commandType: CommandType.StoredProcedure);
 
             //3. Kết quả trả về
             return entity;
@@ -124,12 +124,12 @@ namespace MISA.Infrastructure.Data
             return rowAffect;
         }
 
-        public bool CheckDuplicate(string propName, string propValue, Entity entity)
+        public bool CheckDuplicate(string propName, string propValue, Guid? id)
         {
             //1. Gán đầu vào cho tham số Store Proceduce
             _dynamicParameters.Add($"@p_{propName}", propValue);
-            var entityId = entity.GetType().GetProperty($"{_entityName}Id").GetValue(entity).ToString();
-            _dynamicParameters.Add($"@p_{_entityName}Id", entityId);
+            //var entityId = entity.GetType().GetProperty($"{_entityName}Id").GetValue(entity).ToString();
+            _dynamicParameters.Add($"@p_{_entityName}Id", id);
 
             //2. Thực thi lệnh truy vấn
             var isExists = dbConnection.ExecuteScalar<bool>($"Proc_Check{propName}Exists", param: _dynamicParameters, commandType: CommandType.StoredProcedure);

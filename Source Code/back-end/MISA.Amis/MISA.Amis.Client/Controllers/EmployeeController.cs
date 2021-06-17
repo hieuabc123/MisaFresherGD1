@@ -13,7 +13,7 @@ namespace MISA.Amis.Client.Controllers
     /// Controller API Nhân Viên
     /// </summary>
     /// Created By: NTHIEU (13/06/2021)
-    [Route("api/[controller]s")]
+    [Route("api/v1/[controller]s")]
     [ApiController]
     public class EmployeeController : BaseController<Employee>
     {

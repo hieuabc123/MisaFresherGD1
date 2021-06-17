@@ -6,7 +6,7 @@
     </div>
     <div class="title-distance">
       <div class="title">Nhân viên</div>
-      <div class="btn btn-add">Thêm mới nhân viên</div>
+      <div class="btn btn-add" @click="btnAddOnClick">Thêm mới nhân viên</div>
     </div>
     <!-- #region I. Grid -->
     <div class="grid">
@@ -135,13 +135,19 @@
               <!-- Cột Chức năng -->
               <td class="Function">
                 <div class="function-content">
-                  <div class="btn-edit">Sửa</div>
                   <div
-                    class="btn btn-toggle-select"
+                    class="btn-edit pointer"
+                    @click="btnEditOnClick(employee.employeeId)"
+                  >
+                    Sửa
+                  </div>
+                  <div
+                    class="btn btn-toggle-select pointer"
                     @click.stop.prevent="
                       onClickToggleButton(
                         index,
-                        FunctionDropdown.index_selecting
+                        FunctionDropdown.index_selecting,
+                        employee.employeeId
                       )
                     "
                     :id="`row${index}`"
@@ -167,7 +173,25 @@
         </div>
         <div class="right-pagination">
           <div class="record-in-page">
-            <Combobox/>
+            <Combobox
+              :options="[
+                {
+                  value: 10,
+                  text: `10 bản ghi trên 1 trang`,
+                },
+                {
+                  value: 20,
+                  text: `20 bản ghi trên 1 trang`,
+                },
+                {
+                  value: 30,
+                  text: `30 bản ghi trên 1 trang`,
+                },
+              ]"
+              :value_key="'value'"
+              :label_key="'text'"
+              :defaultValue="10"
+            />
           </div>
           <paginate
             :page-count="EmployeeList.pageCount"
@@ -192,11 +216,25 @@
       :right="FunctionDropdown.right"
       :top="FunctionDropdown.top"
       @onClickOutside="onClickOutside"
+      @duplicateOnClick="btnDuplicateOnClick"
       :is_click_out_side="FunctionDropdown.isClickOutSide"
+      :id="EmployeeList.tr_selected_id"
     />
-    <EmployeeDetail v-if="false" />
+    <EmployeeDetail
+      :is_open.sync="EmployeeDetail.isOpen"
+      :p_employee="EmployeeList.selecting_employee"
+      v-if="EmployeeDetail.isOpen"
+      :departments="EmployeeDetail.departments"
+      :p_form_mode="EmployeeDetail.form_mode"
+    />
+    <Popup
+      :p_isOpen="popup.isOpen"
+      :p_message="popup.message"
+      :p_mode="popup.mode"
+      @p_deleteEmployee="deleteEmployee(selectRow.employeeId)"
+      @p_closePopup="closePopup"
+    />
   </div>
-
 </template>
 
 <script>
@@ -205,7 +243,9 @@ import axios from "axios";
 import FunctionDropdown from "./FunctionDropdown.vue";
 import vClickOutside from "v-click-outside";
 import EmployeeDetail from "./EmployeeDetail.vue";
-import Combobox from '../../Items/Combobox.vue';
+import Combobox from "../../Items/Combobox.vue";
+import { baseUrl } from "../../../config/dev.env";
+import Popup from "../../Items/Popup.vue";
 export default {
   name: "EmployeeList",
   directives: {
@@ -216,6 +256,7 @@ export default {
     FunctionDropdown,
     EmployeeDetail,
     Combobox,
+    Popup,
   },
   data() {
     return {
@@ -223,6 +264,7 @@ export default {
       //1. Đối tượng EmployeeList, đối tượng nhân viên cho component
       EmployeeList: {
         employees: [], // danh sách các nhân viên
+        selecting_employee: {}, // nhân viên đang được chọn
         isDone: true, // Kiểm tra load dữ liệu xong chưa
         pageCount: 1, // Tổng số trang
         pageInt: 1, // Số thứ tự của trang
@@ -231,13 +273,27 @@ export default {
         tr_selected_id: null, // Dòng nào đang được chọn (lấy id) or nhân viên có id đang được chọn
         total_employees: 0, // đếm tổng số bản ghi
       },
-      //2. Đối tượng Component Function Dropdown
+      //2. Đối tượng Component Function Dropdown (ở mục chức năng)
       FunctionDropdown: {
         isOpen: false, // Kiểm tra mở đóng
         right: 0, // vị trí căn lề bên trái
         top: 0, // Vị trí căn lề bên phải
         index_selecting: null, // giá trị trước khi click vào 1 đối tượng click toggle, (giá trị này sẽ được thay đổi sau khi click)
         isClickOutSide: false,
+      },
+
+      //3. Đối tượng Employee Detail (Chi tiết nhân viên)
+      EmployeeDetail: {
+        isOpen: false, // Kiểm tra mở đóng
+        form_mode: "",
+        departments: [],
+      },
+
+      //4. Đối tượng popup
+      popup: {
+        isOpen: true,
+        message: "Warning",
+        mode: "question",
       },
     };
   },
@@ -254,9 +310,11 @@ export default {
      * }
      * Created By: NTHIEU (15/06/2021)
      */
-    onClickToggleButton(index, index_selecting) {
+    onClickToggleButton(index, index_selecting, id) {
       //0. Báo cho dropdown tự custom đây không phải là click out side
       this.FunctionDropdown.isClickOutSide = false;
+      //0. Lấy Id của dòng đang chọn
+      this.EmployeeList.tr_selected_id = id;
       //1. Nếu giá trị trước khi truyền vào bằng giá trị sau khi truyền vào (Tức là click vào cùng 1 đối tượng liên tục)
       if (index == index_selecting) {
         //1.1 Thực hiện việc toggle
@@ -320,7 +378,7 @@ export default {
     },
     //#endregion Sự kiện nút Toggle ở mục chức năng
 
-    //#region 2. Xử lý Sự kiện input tìm kiếm
+    //#region 2. Xử lý Sự kiện input tìm kiếm và nút tìm kiếm
     onChangeInputFilter() {
       this.EmployeeList.pageInt = 1;
       clearTimeout(this.time_out);
@@ -344,11 +402,72 @@ export default {
       this.loadGridContent();
     },
     //#endregion 4
+
+    //#region 5 Xử lý sự kiện Thêm mới, sửa, nhân bản nhân viên và $emit dialog nhân viên
+    /**
+     * Sự kiện click vào nút thêm mới nhân viên
+     * Created By :NTHIEU (16/06/2021)
+     */
+    async btnAddOnClick() {
+      //1. Lấy dữ liệu nhân viên mới
+      await this.getNewEmployee();
+      //2. Mở form dialog với form mode là thêm mới (Add)
+      this.openDialogEmployeeDetail("Add");
+    },
+
+    /**
+     * Sự kiện click vào nút SỬA
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async btnEditOnClick(id) {
+      //1. Lấy dữ liệu nhân viên hiện tại theo Id
+      await this.getEmployeeById(id);
+      //2. Mở form dialog với form mode là Sửa
+      this.openDialogEmployeeDetail("edit");
+    },
+
+    async btnDuplicateOnClick(id) {
+      //1. Lấy dữ liệu nhân bản nhân viên theo Id
+      await this.getDuplicateEmployee(id);
+      //2. Mở form dialog với form mode là thêm mới
+      this.openDialogEmployeeDetail("add");
+    },
+    /**
+     * - Mở form dialog Nhân viên
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async openDialogEmployeeDetail(formMode) {
+      await this.loadDepartments();
+      this.EmployeeDetail.form_mode = formMode;
+      this.EmployeeDetail.isOpen = true;
+    },
+
+    //#endregion 5
+
+    //#region 6 Xử lý sự kiện Popup
+    /**
+     * Mở Popup
+     * Created By: NTHIEU (17/06/2021)
+     */
+    openPopup(p_mode, p_message) {
+      this.popup.mode = p_mode;
+      this.popup.message = p_message;
+      this.popup.isOpen = true;
+    },
+
+    /**
+     * Đóng Popup
+     * Created By: NTHIEU (17/06/2021)
+     */
+    closePopup() {
+      this.popup.isOpen = false;
+    },
+    //#endregion 6
     //#endregion Các sự kiện
 
     //#region Method
     /**
-     * <summary> Load Grid Content</summary>
+     * Load Grid Content
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
     loadGridContent() {
@@ -356,7 +475,7 @@ export default {
     },
 
     /**
-     * <summary> Load dữ liệu tìm kiếm phân trang (Pagination)</summary>
+     * Load dữ liệu tìm kiếm phân trang (Pagination)
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
     loadDataPagingFilter() {
@@ -365,7 +484,7 @@ export default {
       var p_pageSize = this.EmployeeList.pageSize.toString();
       var p_filter = this.EmployeeList.filter.toString();
       var url =
-        "http://localhost:60651/api/Employees/filter?pageint=" +
+        `${baseUrl}/Employees/filter?pageint=` +
         p_pageInt +
         "&pagesize=" +
         p_pageSize +
@@ -381,7 +500,6 @@ export default {
             this.EmployeeList.employees = null;
             this.EmployeeList.total_employees = 0;
           }
-
           this.EmployeeList.isDone = true;
 
           this.EmployeeList.pageCount = Math.ceil(
@@ -389,13 +507,74 @@ export default {
               parseInt(this.EmployeeList.pageSize)
           ); // Tính số trang = tổng số bản ghi / pageSize
         })
-        .catch((res) => {
-          console.log(res);
+        .catch((error) => {
+          console.log(error);
         });
     },
 
-    
+    /**
+     * Lấy dữ liệu nhân viên theo Id
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async getEmployeeById(id) {
+      await axios
+        .get(`${baseUrl}/Employees/` + id)
+        .then((res) => {
+          // debugger;// eslint-disable-line no-debugger
+          this.EmployeeList.selecting_employee = res.data;
+          console.log(this.EmployeeList.selecting_employee);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
 
+    /**
+     * Lấy dữ liệu tạo mới nhân viên
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async getNewEmployee() {
+      await axios
+        .get(`${baseUrl}/Employees/new`)
+        .then((res) => {
+          this.EmployeeList.selecting_employee = res.data.data;
+          console.log(this.EmployeeList.selecting_employee);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    /**
+     * Lấy dữ liệu nhân bản nhân viên
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async getDuplicateEmployee(id) {
+      await axios
+        .get(`http://localhost:60651/api/v1/Employees/duplicate/${id}`)
+        .then((res) => {
+          this.EmployeeList.selecting_employee = res.data.data;
+        })
+        .catch((error) => {
+          console.log("getDuplicateEmployee Error:" + error);
+        });
+    },
+
+    /**
+     * Lấy dữ liệu các phòng ban
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async loadDepartments() {
+      await axios
+        .get("http://localhost:60651/api/v1/Departments")
+        .then((res) => {
+          // debugger // eslint-disable-line no-debugger
+          this.EmployeeDetail.departments = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
 
     //#endregion
   },
@@ -408,7 +587,7 @@ export default {
 <style lang="scss" scope>
 /* --------------------Layout------------------------- */
 //#region Grid Layout
-.employee-list{
+.employee-list {
   position: absolute;
   top: 0;
   left: 0;

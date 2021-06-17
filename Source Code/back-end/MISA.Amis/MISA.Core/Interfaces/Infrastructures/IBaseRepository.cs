@@ -85,7 +85,7 @@ namespace MISA.Core.Interfaces.Infrastructures
         ///     -True or False
         /// </returns>
         /// Created By: NTHIEU (14/06/2021)
-        public bool CheckDuplicate(string propName, string propValue, Entity entity);
+        public bool CheckDuplicate(string propName, string propValue, Guid? id);
         #endregion
     }
 }
