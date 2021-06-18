@@ -149,19 +149,20 @@ namespace MISA.Core.Services
             {
                 range.Merge = true;
             };
-            //3. Tạo header title cho từng cột
+
+            //3. style header title
             using (ExcelRange range = worksheet.Cells["A3:I3"])
             {
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 range.Style.Fill.BackgroundColor.SetColor(Color.LightGray);
                 range.Style.Font.Bold = true;
-
                 // Thêm border cho từng ô
                 for(int j=1; j <= 9; j++)
                 {
                     worksheet.Cells[3, j].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 }
             }
+            //3.1 Tạo header title cho từng cột và
             worksheet.Cells[3, (int)(ExcelEmployeeColumn.Sort)].Value = ExcelResources.Sort;
             worksheet.Cells[3, (int)(ExcelEmployeeColumn.EmployeeCode)].Value = ExcelResources.EmployeeCode;
             worksheet.Cells[3, (int)(ExcelEmployeeColumn.FullName)].Value = ExcelResources.FullName;
@@ -225,6 +226,13 @@ namespace MISA.Core.Services
         #endregion
 
         #region Method Not Emplement
+        /// <summary>
+        /// Xử lý format kiểu định dạng ngày tháng năm cho excel
+        /// </summary>
+        /// <param name="moment"></param>
+        /// <returns>
+        /// string(dd/mm/yyyy)
+        /// </returns>
         public string FomatDateTimeToFormulaDateInExcel(DateTime? moment)
         {
             if (moment != null)

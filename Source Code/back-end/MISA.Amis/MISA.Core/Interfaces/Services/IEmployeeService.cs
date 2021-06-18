@@ -52,6 +52,13 @@ namespace MISA.Core.Interfaces.Services
         /// </returns>
         public Task<ActionServiceResult> GetDuplicateEmployee(Guid id);
 
+        /// <summary>
+        /// Export dữ liệu danh sách nhân viên ra Excel
+        /// </summary>
+        /// <returns>
+        /// file Excel (stream)
+        /// </returns>
+        /// Created By: NTHIEU (18/06/2021)
         public Task<Stream> ExportEmployees();
     }
 }

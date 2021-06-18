@@ -117,8 +117,8 @@ export default {
   background-color: #ffffff;
   border-radius: 4px;
   overflow: hidden;
-  max-width: 400px;
-  min-width: 300px;
+  min-width: 350px;
+  max-width: 440px;
   padding: 32px;
 }
 .popup-content {
@@ -217,7 +217,7 @@ export default {
 
 //#region CSS trạng thái Question
 .question {
-  width: 600px;
+  width: 380px;
   .icon-message {
     background-position: -832px -462px;
     width: 36px;
@@ -301,7 +301,7 @@ export default {
   }
 }
 span {
-  width: calc(100% - 40px);
+  width: 100%;
 }
 
 .icon-close {

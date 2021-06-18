@@ -67,6 +67,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
 .function-item {
   position: relative;
   height: 30px;

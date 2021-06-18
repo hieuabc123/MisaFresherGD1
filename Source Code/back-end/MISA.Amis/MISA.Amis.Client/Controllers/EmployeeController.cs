@@ -94,14 +94,21 @@ namespace MISA.Amis.Client.Controllers
         #endregion
 
         #region Export
+        /// <summary>
+        /// Export dữ liệu nhân viên ra định dạng Excel
+        /// </summary>
+        /// <returns>
+        /// File Excel (.xlsx)
+        /// </returns>
+        /// Created By: NTHIEU (18/06/2021)
         [HttpGet("export")]
-        public async Task<IActionResult> ExportV2(CancellationToken cancellationToken)
+        public async Task<IActionResult> Export()
         {
-            // query data from database  
+            //1. Xử lý tạo fileExcel dữ liệu nhân viên
             var stream = await _employeeService.ExportEmployees();
-            string excelName = $"UserList-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
-
-            //return File(stream, "application/octet-stream", excelName);  
+            //2. Đặt tên cho file
+            string excelName = $"Danh sách nhân viên.xlsx";
+            //3. Trả về cho Client 
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }
         #endregion

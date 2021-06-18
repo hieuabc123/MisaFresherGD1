@@ -75,7 +75,7 @@ namespace MISA.Core.Services
                     StatusCode = 402,
                     UserMsg = entity.Status,
                     DevMsg = entity.Status,
-                    Data = null
+                    Data = "EmployeeCode"
                 };
             }
         }
@@ -99,7 +99,7 @@ namespace MISA.Core.Services
                     StatusCode = 402,
                     UserMsg = entity.Status,
                     DevMsg = entity.Status,
-                    Data = null,
+                    Data = "EmployeeCode",
                 };
             }
         }

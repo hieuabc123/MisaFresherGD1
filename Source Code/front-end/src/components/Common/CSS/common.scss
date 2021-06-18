@@ -75,3 +75,37 @@ select option {
 .pointer {
     cursor: pointer;
 }
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale3d(0.8, 0.8, 0.8);
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.zoomIn {
+    animation-name: zoomIn;
+    animation-duration: 0.4s;
+}
+
+@keyframes rotateIn {
+    from {
+        transform: rotate3d(0, 0, 1, 180deg);
+        opacity: 0;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+input[type="checkbox"] {
+    &:checked+label {
+        animation-name: rotateIn;
+        animation-duration: 0.3s;
+        border: 1px solid #2ca01c;
+    }
+}

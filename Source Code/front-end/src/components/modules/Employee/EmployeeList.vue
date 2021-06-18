@@ -13,6 +13,7 @@
       <!-- #region 1. Grid-header -->
       <div class="grid-header">
         <div class="mi icon-load" @click="loadGridContent"></div>
+        <div class="mi icon-excel pointer" @click="getExportData"></div>
         <div class="input-search">
           <input
             type="text"
@@ -104,8 +105,8 @@
             >
               <!-- Check Box -->
               <td class="checkbox">
-                <input type="checkbox" :id="employee.EmployeeId" />
-                <label for="employee.EmployeeId">
+                <input type="checkbox" :id="index"  />
+                <label :for="index">
                   <div class="mi custom-checkbox"></div>
                 </label>
                 <div class="border-right"></div>
@@ -118,7 +119,7 @@
               <td class="Gender">{{ employee.genderName }}</td>
               <!-- Ngày sinh -->
               <td class="DateOfBirth">
-                {{ employee.dateOfBirth }}
+                {{ frontEndDateFormat(employee.dateOfBirth) }}
               </td>
               <!-- Số CMT, CMND -->
               <td class="IdentityNo">{{ employee.identityNo }}</td>
@@ -188,10 +189,19 @@
                   value: 30,
                   text: `30 bản ghi trên 1 trang`,
                 },
+                {
+                  value: 40,
+                  text: `40 bản ghi trên 1 trang`,
+                },
+                {
+                  value: 50,
+                  text: `50 bản ghi trên 1 trang`,
+                },
               ]"
               :value_key="'value'"
               :label_key="'text'"
-              :defaultValue="10"
+              :model_value.sync="EmployeeList.pageSize"
+              @eventHandle="pageSizeOnClick"
             />
           </div>
           <paginate
@@ -220,7 +230,12 @@
       @duplicateOnClick="btnDuplicateOnClick"
       :is_click_out_side="FunctionDropdown.isClickOutSide"
       :id="EmployeeList.tr_selected_id"
-      @openPopup="openPopup('delete', `Bạn có muốn xóa nhân viên có mã: ${EmployeeList.tr_selected_code} không ?`)"
+      @openPopup="
+        openPopup(
+          'delete',
+          `Bạn có muốn xóa nhân viên có mã: ${EmployeeList.tr_selected_code} không ?`
+        )
+      "
     />
     <EmployeeDetail
       :is_open.sync="EmployeeDetail.isOpen"
@@ -232,7 +247,15 @@
       @openPopup="openPopup"
       @loadComponent="loadGridContent"
       @getNewEmployee="getNewEmployee"
+      @openToast="openToast"
     />
+    <Toast
+      :isShow="toast.isShow"
+      :isHide="toast.isHide"
+      :toastMode="toast.mode"
+      :message="toast.message"
+    />
+
     <Popup
       :p_isOpen="popup.isOpen"
       :p_message="popup.message"
@@ -245,6 +268,7 @@
 
 <script>
 import Paginate from "vuejs-paginate";
+import moment from "moment";
 import axios from "axios";
 import FunctionDropdown from "./FunctionDropdown.vue";
 import vClickOutside from "v-click-outside";
@@ -252,6 +276,7 @@ import EmployeeDetail from "./EmployeeDetail.vue";
 import Combobox from "../../Items/Combobox.vue";
 import { baseUrl } from "../../../config/dev.env";
 import Popup from "../../Items/Popup.vue";
+import Toast from "../../Items/Toast.vue";
 export default {
   name: "EmployeeList",
   directives: {
@@ -263,6 +288,7 @@ export default {
     EmployeeDetail,
     Combobox,
     Popup,
+    Toast,
   },
   data() {
     return {
@@ -271,7 +297,7 @@ export default {
       EmployeeList: {
         employees: [], // danh sách các nhân viên
         selecting_employee: {}, // nhân viên đang được chọn
-        employeeCopy:{},
+        employeeCopy: {},
         isDone: true, // Kiểm tra load dữ liệu xong chưa
         pageCount: 1, // Tổng số trang
         pageInt: 1, // Số thứ tự của trang
@@ -279,7 +305,7 @@ export default {
         filter: "", // Giá trị cần tìm kiếm (filter)
         tr_selected_id: null, // Dòng nào đang được chọn (lấy id) or nhân viên có id đang được chọn
         total_employees: 0, // đếm tổng số bản ghi
-        tr_selected_code: null // Mã của nhân viên đang được chọn , Mã của nhân viên tương ứng với dòng đang được chọn
+        tr_selected_code: null, // Mã của nhân viên đang được chọn , Mã của nhân viên tương ứng với dòng đang được chọn
       },
       //2. Đối tượng Component Function Dropdown (ở mục chức năng)
       FunctionDropdown: {
@@ -302,6 +328,14 @@ export default {
         isOpen: false,
         message: "Warning",
         mode: "question",
+      },
+
+      //5. Đối tượng toast
+      toast: {
+        isShow: false,
+        isHide: false,
+        mode: "",
+        message: "",
       },
     };
   },
@@ -411,6 +445,15 @@ export default {
       this.EmployeeList.pageInt = page;
       this.loadGridContent();
     },
+
+    /**
+     * Click vào page Size (chọn số bản ghi / trang) (Phân trang)
+     * Created By: NTHIEU (16/06/2021)
+     **********************************/
+    pageSizeOnClick() {
+      this.EmployeeList.pageInt = 1;
+      this.loadGridContent();
+    },
     //#endregion 4
 
     //#region 5 Xử lý sự kiện Thêm mới, sửa, nhân bản nhân viên và $emit dialog nhân viên
@@ -449,7 +492,10 @@ export default {
     async openDialogEmployeeDetail(formMode) {
       await this.loadDepartments();
       this.EmployeeDetail.form_mode = formMode;
-      Object.assign(this.EmployeeList.employeeCopy, this.EmployeeList.selecting_employee);
+      Object.assign(
+        this.EmployeeList.employeeCopy,
+        this.EmployeeList.selecting_employee
+      );
       this.EmployeeDetail.isOpen = true;
     },
 
@@ -475,6 +521,29 @@ export default {
       this.popup.isOpen = false;
     },
     //#endregion 6
+
+    //#region 7 Xủ lý sự kiện Toast
+    /**
+     * Toast Notification
+     * Created By Nguyễn Trung Hiếu
+     * Created Date 07/4/2021
+     */
+    openToast(mode, message) {
+      this.showToast();
+      setTimeout(this.hideToast, 2000);
+      this.toast.message = message;
+      this.toast.mode = mode;
+    },
+    showToast() {
+      this.toast.isShow = true;
+      this.toast.isHide = false;
+    },
+    hideToast() {
+      this.toast.isShow = false;
+      this.toast.isHide = true;
+    },
+    //#endregion 7
+
     //#endregion Các sự kiện
 
     //#region Method
@@ -482,15 +551,15 @@ export default {
      * Load Grid Content
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
-    loadGridContent() {
-      this.loadDataPagingFilter(); //dữ liệu Phân trang
+    async loadGridContent() {
+      await this.loadDataPagingFilter(); //dữ liệu Phân trang
     },
 
     /**
      * Load dữ liệu tìm kiếm phân trang (Pagination)
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
-    loadDataPagingFilter() {
+    async loadDataPagingFilter() {
       this.EmployeeList.isDone = false;
       var p_pageInt = this.EmployeeList.pageInt.toString();
       var p_pageSize = this.EmployeeList.pageSize.toString();
@@ -502,7 +571,7 @@ export default {
         p_pageSize +
         "&datafilter=" +
         p_filter;
-      axios
+      await axios
         .get(url)
         .then((res) => {
           if (res.data.data != null) {
@@ -534,6 +603,7 @@ export default {
         .then((res) => {
           // debugger;// eslint-disable-line no-debugger
           this.EmployeeList.selecting_employee = res.data;
+          this.formatDate();
           console.log(this.EmployeeList.selecting_employee);
         })
         .catch((error) => {
@@ -566,18 +636,24 @@ export default {
         .get(`http://localhost:60651/api/v1/Employees/duplicate/${id}`)
         .then((res) => {
           this.EmployeeList.selecting_employee = res.data.data;
+          this.formatDate();
         })
         .catch((error) => {
           console.log("getDuplicateEmployee Error:" + error);
         });
     },
 
-    async deleteEmployee(id){
+    /**
+     * Xóa dữ liệu nhân viên
+     * Created By: NTHIEU (16/06/2021)
+     */
+    async deleteEmployee(id) {
       await axios
         .delete(`http://localhost:60651/api/v1/Employees/${id}`)
         .then((res) => {
           console.log(res.data);
           this.loadGridContent();
+          this.openToast("alert", "Xóa thành công 1 bản ghi");
         })
         .catch((error) => {
           console.log("getDuplicateEmployee Error:" + error);
@@ -600,6 +676,51 @@ export default {
         });
     },
 
+    /**
+     * Export dữ liệu ra file Excel
+     * Created By: NTHIEU (18/06/2021)
+     */
+    async getExportData() {
+      var url = baseUrl + "/Employees/export";
+      window.open(url);
+    },
+
+    /****************************************************************************
+     * Các fomat định dạng cho dữ liệu
+     * Created By Nguyễn Trung Hiếu
+     * Created Date 05/4/2021
+     *****************************************************************************/
+    /**
+     * format định dạng ngày tháng năm hiển thị trên bảng
+     */
+    frontEndDateFormat(date) {
+      if (date != null && date != "")
+        return moment(date, "YYYY-MM-DD").format("DD/MM/YYYY");
+      else return null;
+    },
+
+    /**
+     * Fomat định dạng YYYY/MM/DD cho input[type = date]
+     * Created By: NTHIEU (18/06/2021)
+     */
+    backEndDateFormat(date) {
+      if (date == "" || date == null) return (date = null);
+      else return moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
+    },
+
+    /**
+     * hàm xử lý format date cho input employee
+     * Created By: NTHIEU (18/06/2021)
+     */
+    formatDate() {
+      this.EmployeeList.selecting_employee.dateOfBirth = this.backEndDateFormat(
+        this.EmployeeList.selecting_employee.dateOfBirth
+      );
+      this.EmployeeList.selecting_employee.identityDate =
+        this.backEndDateFormat(
+          this.EmployeeList.selecting_employee.identityDate
+        );
+    },
     //#endregion
   },
   created() {
@@ -905,7 +1026,7 @@ input[type="checkbox"]:checked + label .custom-checkbox {
   position: absolute;
   display: flex;
   align-items: center;
-  right: 60px;
+  right: 100px;
   height: 32px;
   width: 230px;
 }
@@ -944,13 +1065,22 @@ input[type="checkbox"]:checked + label .custom-checkbox {
 }
 .icon-load {
   position: absolute;
-  right: 20px;
+  right: 60px;
   background-position: -425px -201px;
   width: 20px;
   height: 23px;
-  cursor: pointer;
   &:hover {
     background-position: -1098px -90px;
+  }
+}
+.icon-excel {
+  position: absolute;
+  right: 20px;
+  background-position: -705px -202px;
+  width: 23px;
+  height: 20px;
+  &:hover {
+    background-position: -705px -258px;
   }
 }
 
@@ -977,41 +1107,40 @@ input[type="checkbox"]:checked + label .custom-checkbox {
   z-index: 2000;
 }
 .modal {
-  background: #000;
-  opacity: 0.2;
   width: 100%;
   height: 100%;
 }
 .lds-dual-ring {
+  display: flex;
   position: absolute;
   top: 40%;
   left: 50%;
   bottom: 50%;
   transform: translate(-50%, -50%);
+  background: url("../../../assets/loading.svg") no-repeat;
+  background-size: cover;
   display: inline-block;
-  width: 80px;
-  height: 80px;
-}
-.lds-dual-ring:after {
-  content: "";
-  display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #019160 transparent #019160 transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
+  width: 60px;
+  height: 60px;
+  animation: lds-dual-ring 2s linear 0s infinite;
+  -webkit-animation: lds-dual-ring 2s linear 0s infinite;
+  -moz-animation: lds-dual-ring 2s linear 0s infinite;
+  -o-animation: lds-dual-ring 2s linear 0s infinite;
 }
 @keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
   }
-  100% {
-    transform: rotate(360deg);
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
   }
 }
 .displayNone {
   display: none !important;
 }
+
 </style>

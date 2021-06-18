@@ -12,7 +12,6 @@
       <input
         class="label-value"
         v-model="label_value"
-        @input="FilterData"
         disabled
       />
 
@@ -47,8 +46,8 @@ export default {
   },
   name: "combobox",
   props: {
-    defaultValue: {
-      default: null,
+    model_value:{
+      default: null
     },
     value_key: {
       type: String,
@@ -64,7 +63,11 @@ export default {
       default: null,
     },
   },
-
+  watch:{
+    model_value(){
+      this.eventHandle();
+    }
+  },
   data() {
     return {
       is_active: false,
@@ -75,7 +78,6 @@ export default {
       data_filter: [],
     };
   },
-
   methods: {
     Test() {
       alert(1);
@@ -135,7 +137,7 @@ export default {
      * Created By: NTHIEU (07/06/2021)
      */
     SetValue(val) {
-      this.$emit("input", this.GetValue(val));
+      this.$emit("update:model_value", this.GetValue(val));
       this.label_value = val[this.label_key];
       this.option_selected = val[this.value_key];
     },
@@ -153,7 +155,7 @@ export default {
       //2. Lấy giá trị mặc định
       if(this.options!=null)
       this.data_filter.forEach((option) => {
-        if (option[this.value_key] == this.defaultValue) {
+        if (option[this.value_key] == this.model_value) {
           this.label_value = option[this.label_key];
           this.option_selected = option[this.value_key];
         }
@@ -202,6 +204,9 @@ export default {
         );
       }
     },
+    eventHandle(){
+      this.$emit("eventHandle");
+    }
     //#endregion
   },
   created() {

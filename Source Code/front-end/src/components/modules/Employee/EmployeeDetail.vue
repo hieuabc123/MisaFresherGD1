@@ -3,7 +3,7 @@
     <!-- phần mờ phía sau dialog -->
     <div class="modal"></div>
     <!--Nội dung phần dialog -->
-    <div class="dialog-detail">
+    <div class="dialog-detail zoomIn" >
       <div class="dialog-header">
         <div class="dialog-header-title">
           <div class="mi mi-24 icon-close X" @click="btnXOnClick"></div>
@@ -43,6 +43,7 @@
                   @mouseover="hoverInEmployeeCode"
                   @mouseleave="mouseLeave"
                   :class="{ validate: !required.employeeCode.check }"
+                  @focusout="checkEmployeeCode"
                 />
               </div>
             </div>
@@ -500,10 +501,16 @@ export default {
         .post(url, data)
         .then((res) => {
           if (res.data.statusCode >= 400 && res.data.statusCode < 500)
+          if(res.data.data=="EmployeeCode"){
             this.openPopup("warning", res.data.userMsg);
+            this.required.employeeCode.check= false;
+            this.required.employeeCode.message = res.data.userMsg;
+          }
+            
           if (res.data.statusCode == 200) {
             this.$emit("loadComponent");
             this.process_isdone = true;
+            this.$emit("openToast","success","Thêm mới thành công");
           }
         })
         .catch((error) => {
@@ -531,6 +538,7 @@ export default {
             // debugger; // eslint-disable-line no-debugger
             this.$emit("loadComponent");
             this.process_isdone = true;
+            this.$emit("openToast","success","sửa thành công");
           }
         })
         .catch((error) => {
