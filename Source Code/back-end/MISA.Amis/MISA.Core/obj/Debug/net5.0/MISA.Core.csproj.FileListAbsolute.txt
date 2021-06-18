@@ -25,3 +25,6 @@ D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\De
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\Debug\net5.0\MISA.Core.csproj.GenerateResource.cache
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\Debug\net5.0\MISA.Core.Properties.ExcelResources.resources
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\Debug\net5.0\MISA.Core.Properties.Resources.resources
+E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\Debug\net5.0\MISA.Core.Properties.ExcelResources.resources
+E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\Debug\net5.0\MISA.Core.Properties.Resources.resources
+E:\Misa\Misa fresher\Đanh gia\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Core\obj\Debug\net5.0\MISA.Core.csproj.GenerateResource.cache
