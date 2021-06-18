@@ -147,7 +147,8 @@
                       onClickToggleButton(
                         index,
                         FunctionDropdown.index_selecting,
-                        employee.employeeId
+                        employee.employeeId,
+                        employee.employeeCode
                       )
                     "
                     :id="`row${index}`"
@@ -219,19 +220,24 @@
       @duplicateOnClick="btnDuplicateOnClick"
       :is_click_out_side="FunctionDropdown.isClickOutSide"
       :id="EmployeeList.tr_selected_id"
+      @openPopup="openPopup('delete', `Bạn có muốn xóa nhân viên có mã: ${EmployeeList.tr_selected_code} không ?`)"
     />
     <EmployeeDetail
       :is_open.sync="EmployeeDetail.isOpen"
       :p_employee="EmployeeList.selecting_employee"
+      :p_employee_before="EmployeeList.employeeCopy"
       v-if="EmployeeDetail.isOpen"
       :departments="EmployeeDetail.departments"
-      :p_form_mode="EmployeeDetail.form_mode"
+      :p_form_mode.sync="EmployeeDetail.form_mode"
+      @openPopup="openPopup"
+      @loadComponent="loadGridContent"
+      @getNewEmployee="getNewEmployee"
     />
     <Popup
       :p_isOpen="popup.isOpen"
       :p_message="popup.message"
       :p_mode="popup.mode"
-      @p_deleteEmployee="deleteEmployee(selectRow.employeeId)"
+      @p_deleteEmployee="deleteEmployee(EmployeeList.tr_selected_id)"
       @p_closePopup="closePopup"
     />
   </div>
@@ -265,6 +271,7 @@ export default {
       EmployeeList: {
         employees: [], // danh sách các nhân viên
         selecting_employee: {}, // nhân viên đang được chọn
+        employeeCopy:{},
         isDone: true, // Kiểm tra load dữ liệu xong chưa
         pageCount: 1, // Tổng số trang
         pageInt: 1, // Số thứ tự của trang
@@ -272,6 +279,7 @@ export default {
         filter: "", // Giá trị cần tìm kiếm (filter)
         tr_selected_id: null, // Dòng nào đang được chọn (lấy id) or nhân viên có id đang được chọn
         total_employees: 0, // đếm tổng số bản ghi
+        tr_selected_code: null // Mã của nhân viên đang được chọn , Mã của nhân viên tương ứng với dòng đang được chọn
       },
       //2. Đối tượng Component Function Dropdown (ở mục chức năng)
       FunctionDropdown: {
@@ -291,7 +299,7 @@ export default {
 
       //4. Đối tượng popup
       popup: {
-        isOpen: true,
+        isOpen: false,
         message: "Warning",
         mode: "question",
       },
@@ -310,11 +318,13 @@ export default {
      * }
      * Created By: NTHIEU (15/06/2021)
      */
-    onClickToggleButton(index, index_selecting, id) {
+    onClickToggleButton(index, index_selecting, id, code) {
       //0. Báo cho dropdown tự custom đây không phải là click out side
       this.FunctionDropdown.isClickOutSide = false;
       //0. Lấy Id của dòng đang chọn
       this.EmployeeList.tr_selected_id = id;
+      //0. Lấy tên của employee đang được chọn
+      this.EmployeeList.tr_selected_code = code;
       //1. Nếu giá trị trước khi truyền vào bằng giá trị sau khi truyền vào (Tức là click vào cùng 1 đối tượng liên tục)
       if (index == index_selecting) {
         //1.1 Thực hiện việc toggle
@@ -412,7 +422,7 @@ export default {
       //1. Lấy dữ liệu nhân viên mới
       await this.getNewEmployee();
       //2. Mở form dialog với form mode là thêm mới (Add)
-      this.openDialogEmployeeDetail("Add");
+      this.openDialogEmployeeDetail("add");
     },
 
     /**
@@ -439,6 +449,7 @@ export default {
     async openDialogEmployeeDetail(formMode) {
       await this.loadDepartments();
       this.EmployeeDetail.form_mode = formMode;
+      Object.assign(this.EmployeeList.employeeCopy, this.EmployeeList.selecting_employee);
       this.EmployeeDetail.isOpen = true;
     },
 
@@ -450,6 +461,7 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     openPopup(p_mode, p_message) {
+      // debugger // eslint-disable-line no-debugger
       this.popup.mode = p_mode;
       this.popup.message = p_message;
       this.popup.isOpen = true;
@@ -554,6 +566,18 @@ export default {
         .get(`http://localhost:60651/api/v1/Employees/duplicate/${id}`)
         .then((res) => {
           this.EmployeeList.selecting_employee = res.data.data;
+        })
+        .catch((error) => {
+          console.log("getDuplicateEmployee Error:" + error);
+        });
+    },
+
+    async deleteEmployee(id){
+      await axios
+        .delete(`http://localhost:60651/api/v1/Employees/${id}`)
+        .then((res) => {
+          console.log(res.data);
+          this.loadGridContent();
         })
         .catch((error) => {
           console.log("getDuplicateEmployee Error:" + error);

@@ -1,9 +1,12 @@
-﻿using MISA.Core.Entities.Base;
+﻿using Microsoft.AspNetCore.Mvc;
+using MISA.Core.Entities.Base;
 using MISA.Core.Entities.Directory;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MISA.Core.Interfaces.Services
@@ -48,5 +51,7 @@ namespace MISA.Core.Interfaces.Services
         /// - 500: Lỗi hệ thống
         /// </returns>
         public Task<ActionServiceResult> GetDuplicateEmployee(Guid id);
+
+        public Task<Stream> ExportEmployees();
     }
 }

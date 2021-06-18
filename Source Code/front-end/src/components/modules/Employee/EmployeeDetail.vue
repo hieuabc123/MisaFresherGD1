@@ -6,7 +6,7 @@
     <div class="dialog-detail">
       <div class="dialog-header">
         <div class="dialog-header-title">
-          <div class="mi mi-24 icon-close X" @click="btnXOnClick()"></div>
+          <div class="mi mi-24 icon-close X" @click="btnXOnClick"></div>
           <div class="mi mi-24 icon-question"></div>
         </div>
         <div class="dialog-header-content">
@@ -41,8 +41,8 @@
                   ref="employeeCode"
                   v-model="p_employee.employeeCode"
                   @mouseover="hoverInEmployeeCode"
-                  @mouseleave="required.event.is_hover = false"
-                  :class="{'validate': !required.employeeCode.check}"
+                  @mouseleave="mouseLeave"
+                  :class="{ validate: !required.employeeCode.check }"
                 />
               </div>
             </div>
@@ -56,8 +56,9 @@
                   type="text"
                   v-model="p_employee.fullName"
                   @mouseover="hoverInFullName"
-                  @mouseleave="required.event.is_hover = false"
-                  :class="{'validate': !required.fullName.check}"
+                  @mouseleave="mouseLeave"
+                  :class="{ validate: !required.fullName.check }"
+                  @focusout="checkFullName"
                 />
               </div>
             </div>
@@ -66,14 +67,17 @@
                 Đơn vị
                 <div style="color: red; padding-left: 4px">&nbsp; *</div>
               </div>
-              <div class="input" @mouseover="hoverInDepartment" @mouseleave="required.event.is_hover = false">
+              <div class="input" @mouseover="hoverInDepartment">
                 <AutoComplete
                   :options="departments"
                   :value_key="'departmentId'"
                   :label_key="'departmentName'"
                   :model_value.sync="p_employee.departmentId"
                   ref="autocomplete"
-                  :validate_class="{'validate':!required.departmentId.check}"
+                  :validate_class="{ validate: !required.departmentId.check }"
+                  @focusOut="validateDepartment"
+                  @p_click="required.event.is_hover = false"
+                  @mouseLeave="mouseLeave"
                 />
               </div>
             </div>
@@ -225,7 +229,7 @@
         <div class="btn btn-save-and-add" @click="btnSaveAndAddOnClick">
           Cất và thêm
         </div>
-        <div class="btn btn-cancel">Hủy</div>
+        <div class="btn btn-cancel" @click="closeDialogEmployeeDetail">Hủy</div>
       </div>
     </div>
     <div
@@ -238,8 +242,14 @@
     >
       {{ required.event.message }}
     </div>
-    
-
+    <Popup
+      :p_isOpen="popup.isOpen"
+      :p_message="popup.message"
+      :p_mode="popup.mode"
+      @p_closePopup="closePopup"
+      @p_btnNotAgreeSave="closeDialogEmployeeDetail"
+      @p_btnAgreeSave="btnSaveOnClick"
+    />
   </div>
 </template>
 
@@ -247,9 +257,10 @@
 import axios from "axios";
 import AutoComplete from "../../Items/AutoComplete.vue";
 import { baseUrl } from "../../../config/dev.env";
+import Popup from "../../Items/Popup.vue";
 export default {
   name: "EmployeeDetail",
-  components: { AutoComplete },
+  components: { AutoComplete, Popup },
   props: {
     // Kiểu trạng thái của form thêm mới hay là sửa, nhân bản ...
     is_open: {
@@ -262,9 +273,17 @@ export default {
       default: [],
     },
     /**
-     * Đối tượng employee Truyền vào
+     * Đối tượng employee Truyền vào sẽ được thay đổi
      */
     p_employee: {
+      type: Object,
+      default: null,
+    },
+
+    /**
+     * Đối tượng employee truyền vào mặc định
+     */
+    p_employee_before: {
       type: Object,
       default: null,
     },
@@ -288,15 +307,22 @@ export default {
           check: true,
           message: null,
         },
-        event:{
-          is_hover:false,
-          message:null
-        }
+        event: {
+          is_hover: false,
+          message: null,
+        },
       },
       position_required: {
         top: 0,
         left: 0,
-        time_out: null
+        time_out: null,
+      },
+      process_isdone: false,
+      //4. Đối tượng popup
+      popup: {
+        isOpen: false,
+        message: "Warning",
+        mode: "question",
       },
     };
   },
@@ -308,11 +334,13 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     hoverInEmployeeCode(event) {
-      if(this.required.employeeCode.check == false){
+      if (this.required.employeeCode.check == false) {
         this.required.event.message = this.required.employeeCode.message;
         this.getPositionOfMouse(event);
+      } else {
+        clearTimeout(this.time_out);
+        this.required.event.is_hover = false;
       }
-      else this.required.event.is_hover = false;
     },
 
     /**
@@ -320,13 +348,13 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     hoverInFullName(event) {
-      if(this.required.fullName.check == false){
+      if (this.required.fullName.check == false) {
         this.required.event.message = this.required.fullName.message;
         this.getPositionOfMouse(event);
-        
+      } else {
+        clearTimeout(this.time_out);
+        this.required.event.is_hover = false;
       }
-      else this.required.event.is_hover = false;
-      
     },
 
     /**
@@ -334,13 +362,21 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     hoverInDepartment(event) {
-      if(this.required.departmentId.check == false){
+      if (this.required.departmentId.check == false) {
         this.required.event.message = this.required.departmentId.message;
         this.getPositionOfMouse(event);
+      } else {
+        clearTimeout(this.time_out);
+        this.required.event.is_hover = false;
       }
-      else this.required.event.is_hover = false;
     },
-
+    /**
+     * Sự kiện rời chuột ra ngoài phần tử
+     */
+    mouseLeave() {
+      clearTimeout(this.time_out);
+      this.required.event.is_hover = false;
+    },
     /**
      * Lấy vị trí của chuột
      * Created By: NTHIEU (17/06/2021)
@@ -355,19 +391,48 @@ export default {
       }, 700);
     },
     //#endregion 1
+
+    //#region 2 Xử lý sự kiện Popup
+    /**
+     * Mở Popup
+     * Created By: NTHIEU (17/06/2021)
+     */
+    openPopup(p_mode, p_message) {
+      // debugger // eslint-disable-line no-debugger
+      this.popup.mode = p_mode;
+      this.popup.message = p_message;
+      this.popup.isOpen = true;
+    },
+
+    /**
+     * Đóng Popup
+     * Created By: NTHIEU (17/06/2021)
+     */
+    closePopup() {
+      this.popup.isOpen = false;
+    },
+    //#endregion 2
     /**
      * Sự kiện click vào nút X tắt dialog
      * Created By: NTHIEU (16/06/2021)
      */
     btnXOnClick() {
-      this.closeDialogEmployeeDetail();
+      if (this.shallowEqual(this.p_employee, this.p_employee_before) == true)
+        this.closeDialogEmployeeDetail();
+      else
+        this.openPopup(
+          "question",
+          "Dữ liệu đã bị thay đổi, bạn có muốn cất không ?"
+        );
     },
     /**
      * Sự kiện click vào nút Cất
      * Created By: NTHIEU (17/06/2021)
      */
     async btnSaveOnClick() {
+      this.process_isdone = false;
       if (this.validate()) {
+        this.popup.isOpen=false;
         switch (this.p_form_mode) {
           case "add":
             await this.addNewEmployee();
@@ -376,9 +441,13 @@ export default {
             await this.updateEmployee();
             break;
           case "duplicate":
-            await this.updateEmployee();
+            await this.addNewEmployee();
             break;
         }
+        if (this.process_isdone == true) this.closeDialogEmployeeDetail();
+        
+      } else {
+        this.openPopup("warning", this.p_employee.status);
       }
     },
     /**
@@ -386,6 +455,7 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     async btnSaveAndAddOnClick() {
+      this.process_isdone = false;
       if (this.validate()) {
         switch (this.p_form_mode) {
           case "add":
@@ -395,9 +465,15 @@ export default {
             await this.updateEmployee();
             break;
           case "duplicate":
-            await this.updateEmployee();
+            await this.addNewEmployee();
             break;
         }
+        if (this.process_isdone == true) {
+          this.$emit("getNewEmployee");
+          this.$emit("update:p_form_mode", "add");
+        }
+      } else {
+        this.openPopup("warning", this.p_employee.status);
       }
     },
 
@@ -424,13 +500,18 @@ export default {
         .post(url, data)
         .then((res) => {
           if (res.data.statusCode >= 400 && res.data.statusCode < 500)
-            console.log(res.data);
+            this.openPopup("warning", res.data.userMsg);
           if (res.data.statusCode == 200) {
-            console.log(res.data);
+            this.$emit("loadComponent");
+            this.process_isdone = true;
           }
         })
         .catch((error) => {
-          error;
+          this.openPopup(
+            "warning",
+            "Có lỗi với hệ thống vui lòng liên hệ Misa để được trợ giúp:" +
+              error
+          );
         });
     },
 
@@ -445,13 +526,19 @@ export default {
         .put(url, data)
         .then((res) => {
           if (res.data.statusCode >= 400 && res.data.statusCode < 500)
-            console.log(res.data);
+            this.openPopup("warning", res.data.userMsg);
           if (res.data.statusCode == 200) {
-            console.log(res.data);
+            // debugger; // eslint-disable-line no-debugger
+            this.$emit("loadComponent");
+            this.process_isdone = true;
           }
         })
         .catch((error) => {
-          console.log(error);
+          this.openPopup(
+            "warning",
+            "Có lỗi với hệ thống vui lòng liên hệ Misa để được trợ giúp:" +
+              error
+          );
         });
     },
 
@@ -464,7 +551,7 @@ export default {
       this.$refs.employeeCode.focus();
     },
 
-    checkNullEmployeeCode() {
+    checkEmployeeCode() {
       var isValid = true;
       if (
         this.p_employee.employeeCode == null ||
@@ -475,11 +562,14 @@ export default {
         this.required.employeeCode.message =
           "Thông tin mã nhân viên không được để trống";
         this.p_employee.status = "Thông tin mã nhân viên không được để trống";
+      } else {
+        this.required.employeeCode.check = true;
+        isValid = true;
       }
       return isValid;
     },
 
-    checkNullFullName() {
+    checkFullName() {
       var isValid = true;
       if (this.p_employee.fullName == null || this.p_employee.fullName == "") {
         isValid = false;
@@ -487,11 +577,15 @@ export default {
         this.required.fullName.message =
           "Thông tin Tên nhân viên không được để trống";
         this.p_employee.status = "Thông tin Tên nhân viên không được để trống";
+      } else {
+        this.required.fullName.check = true;
+        isValid = true;
       }
       return isValid;
     },
-    checkNullDepartmentId() {
+    checkDepartmentId() {
       var isValid = true;
+      // 1. Check không được để trống
       if (
         this.p_employee.departmentId == null ||
         this.p_employee.departmentId == ""
@@ -502,26 +596,37 @@ export default {
           "Thông tin Đơn vị không được để trống";
         this.p_employee.status = "Thông tin Đơn vị không được để trống";
       }
+      // 2. Check tồn tại giá trị
+      else if (this.checkAvailble() == true) {
+        this.required.departmentId.check = true;
+        isValid = true;
+      } else isValid = false;
       return isValid;
+    },
+
+    validateDepartment() {
+      if (this.required.departmentId.check == false) {
+        this.checkDepartmentId();
+      }
     },
     /**
      * Check Null or Empty Required
      * Created By: NTHIEU (17/06/2021)
      */
-    checkNullOrEmpty() {
+    validate() {
       var isValid = true;
       //1. Kiểm tra để trống thông tin Mã
-      var check_null_employeeCode = this.checkNullEmployeeCode();
+      var check_employeeCode = this.checkEmployeeCode();
       //2. Kiểm tra để trống thông tin Họ và tên
-      var check_null_fullName = this.checkNullFullName();
+      var check_fullName = this.checkFullName();
       //3. Kiểm tra để trông thông tin đơn vị
-      var check_null_departmentId = this.checkNullDepartmentId();
+      var check_departmentId = this.checkDepartmentId();
 
       //4. Kiểm tra xem tát cả các trường có thỏa mãn điều kiện không
       if (
-        check_null_employeeCode == true &&
-        check_null_fullName == true &&
-        check_null_departmentId == true
+        check_employeeCode == true &&
+        check_fullName == true &&
+        check_departmentId == true
       )
         isValid = true;
       else isValid = false;
@@ -544,22 +649,35 @@ export default {
           "Thông tin đơn vị không tồn tại trong hệ thống";
         this.p_employee.status =
           "Thông tin đơn vị không tồn tại trong hệ thống";
+      } else {
+        // debugger // eslint-disable-line no-debugger
+        this.required.departmentId.check = true;
+        isValid = true;
       }
       return isValid;
     },
 
     /**
-     * Validate dữ liệu
-     * Created By: NTHIEU (17/06/2021)
+     * Hàm so sánh nông ( so sánh từng giá trị của từng phần tử)
+     * Created By: NTHIEU (18/06/2021)
      */
-    validate() {
-      var isValid = false;
-      var isCheckNull = this.checkNullOrEmpty();
-      var isCheckAvailble = this.checkAvailble();
-      if (isCheckNull == true && isCheckAvailble == true) {
-        isValid = true;
-      } else isValid = false;
-      return isValid;
+    shallowEqual(object1, object2) {
+      //1. Lấy chuỗi keys của từng object (giống lấy properties trong C#)
+      const keys1 = Object.keys(object1);
+      const keys2 = Object.keys(object2);
+      //2. Kiểm tra xem độ dài của 2 properties khác nhau không
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+      //3. Kiểm tra từng giá trị value tương ứng với từng key
+      for (let key of keys1) {
+        if(key!="status")
+        if (object1[key] !== object2[key]) {
+          return false;
+        }
+      }
+      //4. kết quả trả về default
+      return true;
     },
     //#endregion II
   },
@@ -843,7 +961,7 @@ input[type="radio"]:checked + .custom-radio .radio-content {
 .flex {
   display: flex;
 }
-.validate{
+.validate {
   border-color: red !important;
 }
 </style>

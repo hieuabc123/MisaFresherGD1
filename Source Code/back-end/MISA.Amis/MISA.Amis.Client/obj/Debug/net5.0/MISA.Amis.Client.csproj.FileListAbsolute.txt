@@ -71,3 +71,6 @@ D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Microsoft.DotNet.PlatformAbstractions.dll
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
 D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Newtonsoft.Json.dll
+D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\EPPlus.dll
+D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\Microsoft.IO.RecyclableMemoryStream.dll
+D:\Nthieu Dep zai\MisaFresherGD1\Source Code\back-end\MISA.Amis\MISA.Amis.Client\bin\Debug\net5.0\System.Xml.XPath.XmlDocument.dll

@@ -5,8 +5,8 @@
       
       v-click-outside="onFocusOut"
     >
-      <div class="function-item" @click="duplicateOnClick()">Nhân bản</div>
-      <div class="function-item">Xóa</div>
+      <div class="function-item" @click="duplicateOnClick">Nhân bản</div>
+      <div class="function-item" @click="btnDeleteOnClick">Xóa</div>
       <div class="function-item">Ngưng Sử Dụng</div>
     </div>
   </div>
@@ -42,6 +42,9 @@ export default {
     duplicateOnClick(){
       this.$emit("duplicateOnClick",this.id);
       this.$emit("onClickOutside");
+    },
+    btnDeleteOnClick(){
+      this.$emit("openPopup",this.id);
     }
   },
   mounted() {

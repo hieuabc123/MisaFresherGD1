@@ -12,4 +12,16 @@ namespace MISA.Core.Enum
         Female = 0,
         Other = 2,
     }
+    public enum ExcelEmployeeColumn
+    {
+        Sort = 1,
+        EmployeeCode = 2,
+        FullName = 3,
+        Gender = 4,
+        DateOfBirth = 5,
+        Position = 6,
+        DepartmentName = 7,
+        AccountNumber = 8,
+        BankName = 9
+    }
 }

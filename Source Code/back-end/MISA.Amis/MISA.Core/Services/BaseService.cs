@@ -87,8 +87,8 @@ namespace MISA.Core.Services
                 return new ActionServiceResult
                 {
                     StatusCode = 200,
-                    UserMsg = entity.Status,
-                    DevMsg = entity.Status,
+                    UserMsg = "Sủa thành công",
+                    DevMsg = "Sửa thành công",
                     Data = await _baseRepository.UpdateData(entity, id)
                 };
             }
@@ -99,7 +99,7 @@ namespace MISA.Core.Services
                     StatusCode = 402,
                     UserMsg = entity.Status,
                     DevMsg = entity.Status,
-                    Data = null
+                    Data = null,
                 };
             }
         }
@@ -223,7 +223,9 @@ namespace MISA.Core.Services
                     if (isExists == true)
                     {
                         isValid = false;
-                        entity.Status = string.Format(Properties.Resources.error_duplicate, propName, propValue);
+                        if(propName == "EmployeeCode")
+                        entity.Status = string.Format(Properties.Resources.error_duplicate, "Mã nhân viên", propValue);
+                        else entity.Status = string.Format(Properties.Resources.error_duplicate, propName, propValue);
                     }
                 }
             };

@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using MISA.Core.Entities.Directory;
 using MISA.Core.Interfaces.Services;
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MISA.Amis.Client.Controllers
@@ -30,7 +33,7 @@ namespace MISA.Amis.Client.Controllers
         /// </summary>
         /// <param name="p_employeeService"> Đối tượng service truyền vào</param>
         /// <param name="baseService"> Đối tượng BaseService</param>
-        public EmployeeController(IEmployeeService p_employeeService, IBaseService<Employee> baseService):base(baseService)
+        public EmployeeController(IEmployeeService p_employeeService, IBaseService<Employee> baseService) : base(baseService)
         {
             _employeeService = p_employeeService;
         }
@@ -50,7 +53,7 @@ namespace MISA.Amis.Client.Controllers
         /// </returns>
         /// Created By: NTHIEU (14/06/2021)
         [HttpGet("filter")]
-        public async Task<IActionResult> GetEmployeesPagingFilter(int pageInt, int pageSize, string dataFilter )
+        public async Task<IActionResult> GetEmployeesPagingFilter(int pageInt, int pageSize, string dataFilter)
         {
             var res = await _employeeService.GetEmployeesPagingFilter(pageInt, pageSize, dataFilter);
             return Ok(res);
@@ -87,6 +90,19 @@ namespace MISA.Amis.Client.Controllers
         {
             var res = await _employeeService.GetDuplicateEmployee(id);
             return Ok(res);
+        }
+        #endregion
+
+        #region Export
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportV2(CancellationToken cancellationToken)
+        {
+            // query data from database  
+            var stream = await _employeeService.ExportEmployees();
+            string excelName = $"UserList-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+
+            //return File(stream, "application/octet-stream", excelName);  
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }
         #endregion
     }

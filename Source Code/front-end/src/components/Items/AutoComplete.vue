@@ -15,6 +15,8 @@
         @input="FilterData"
         ref="focusInput"
         :class="validate_class"
+        @focusout="focusOut"
+        @mouseleave="mouseLeave"
       />
       <div class="icon-item" @click="ToggleOnClick">
         <div class="icon-toggle"></div>
@@ -152,7 +154,6 @@ export default {
       } else {
         this.SetValue(this.data_filter[this.index_Selecting]);
       }
-
       this.HideOptions();
     },
 
@@ -167,6 +168,16 @@ export default {
       }
 
       this.isShow = true;
+    },
+    /**
+     * Sự kiện focusOut
+     */
+    focusOut(){
+      this.$emit("focusOut");
+    },
+
+    mouseLeave(){
+      this.$emit("mouseLeave");
     },
     //#endregion
 
@@ -237,6 +248,8 @@ export default {
       var is_availble = false;
       this.options.forEach((option) => {
         if (option[this.label_key] == this.label_value) {
+          // debugger // eslint-disable-line no-debugger
+          this.$emit("update:model_value", option[this.value_key]);
           is_availble = true;
         }
       });
@@ -246,10 +259,18 @@ export default {
       else if (this.label_value == null || this.label_value == ""){
         this.$emit("update:model_value", null)
       }
+      this.$emit("focusOut");
       this.isShow = false;
       this.index_Selecting = -1;
     },
 
+    /**
+     * Sự kiện click vào autocomplete
+     */
+    autocompleteOnclick(){
+      this.$emit("p_click");
+      this.FilterData();
+    },
     /**
      * Hàm tìm kiếm
      * Created By: NTHIEU (10/06/2021)

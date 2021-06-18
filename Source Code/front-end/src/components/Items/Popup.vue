@@ -58,7 +58,6 @@ export default {
      */
     btnAgreeDelete() {
       this.$emit("p_deleteEmployee");
-      this.loadData();
       this.closePopup();
     },
 
@@ -67,7 +66,7 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     btnNotAgreeSave(){
-      this.$emit("p_closeDialog");
+      this.$emit("p_btnNotAgreeSave");
       this.closePopup();
     },
 
@@ -76,8 +75,8 @@ export default {
      * Created By: NTHIEU (17/06/2021)
      */
     btnAgreeSave(){
-      this.$emit("p_btnSave");
-      this.closePopup();
+      this.$emit("p_btnAgreeSave");
+      // this.closePopup();
     },
     /**
      * Close Pop up
