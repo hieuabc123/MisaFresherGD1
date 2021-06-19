@@ -1,12 +1,13 @@
 <template>
-  <div class="dialog employee-detail">
+  <div class="dialog employee-detail" @keydown.esc="btnXOnClick">
     <!-- phần mờ phía sau dialog -->
     <div class="modal"></div>
-    <!--Nội dung phần dialog -->
-    <div class="dialog-detail zoomIn" >
+    <!-- #region I Nội dung phần dialog -->
+    <div class="dialog-detail zoomIn">
+      <!-- #region 1. Dialog Header -->
       <div class="dialog-header">
         <div class="dialog-header-title">
-          <div class="mi mi-24 icon-close X" @click="btnXOnClick"></div>
+          <div class="mi mi-24 icon-close X" @click="btnXOnClick" title="Đóng dialog"></div>
           <div class="mi mi-24 icon-question"></div>
         </div>
         <div class="dialog-header-content">
@@ -27,6 +28,9 @@
           </div>
         </div>
       </div>
+      <!-- #endregion 1 -->
+
+      <!-- #region 2. Dialog content -->
       <div class="dialog-content">
         <div class="form form-1">
           <div class="w-1/2 grid-left">
@@ -98,7 +102,7 @@
             <div class="grid-item" id="dateOfBirth">
               <div class="input-title">Ngày sinh</div>
               <div class="input">
-                <input type="date" v-model="p_employee.dateOfBirth" />
+                <input type="date" placeholder="DD/MM/YYYY" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" v-model="p_employee.dateOfBirth" />
               </div>
             </div>
             <div class="grid-item column-2" id="gender">
@@ -225,6 +229,9 @@
           <div class="grid-item"></div>
         </div>
       </div>
+      <!-- #endregion 2 -->
+
+      <!-- #region 3. Dialog Bottom -->
       <div class="dialog-bottom">
         <div class="btn btn-save" @click="btnSaveOnClick">Cất</div>
         <div class="btn btn-save-and-add" @click="btnSaveAndAddOnClick">
@@ -232,7 +239,11 @@
         </div>
         <div class="btn btn-cancel" @click="closeDialogEmployeeDetail">Hủy</div>
       </div>
+      <!-- #endregion 3 -->
     </div>
+    <!-- #endregion I -->
+    
+    <!-- Nội dung phần hover required -->
     <div
       class="required"
       :style="{
@@ -243,6 +254,8 @@
     >
       {{ required.event.message }}
     </div>
+
+    <!-- Thẻ Popup -->
     <Popup
       :p_isOpen="popup.isOpen"
       :p_message="popup.message"
@@ -262,6 +275,8 @@ import Popup from "../../Items/Popup.vue";
 export default {
   name: "EmployeeDetail",
   components: { AutoComplete, Popup },
+
+  //#region Declare
   props: {
     // Kiểu trạng thái của form thêm mới hay là sửa, nhân bản ...
     is_open: {
@@ -327,6 +342,8 @@ export default {
       },
     };
   },
+  //#endregion
+  
   methods: {
     //#region I. Xử lý các sự kiện
     //#region 1. Sự kiện hover
@@ -413,6 +430,8 @@ export default {
       this.popup.isOpen = false;
     },
     //#endregion 2
+    
+    
     /**
      * Sự kiện click vào nút X tắt dialog
      * Created By: NTHIEU (16/06/2021)
@@ -491,7 +510,7 @@ export default {
     },
 
     /**
-     * Insert New Employee to Server
+     * Insert New Employee to Server (Thêm mới nhân viên)
      * Created By: NTHIEU (17/06/2021)
      */
     async addNewEmployee() {
@@ -523,7 +542,7 @@ export default {
     },
 
     /**
-     * Update Employee to Server
+     * Update Employee to Server (Cập nhật thông tin nhân viên)
      * Created By: NTHIEU (17/06/2021)
      */
     async updateEmployee() {
@@ -559,6 +578,10 @@ export default {
       this.$refs.employeeCode.focus();
     },
 
+    ///#region Validate
+    /**
+     * Check Mã nhân viên
+     */
     checkEmployeeCode() {
       var isValid = true;
       if (
@@ -577,6 +600,9 @@ export default {
       return isValid;
     },
 
+    /**
+     * check Họ tên
+     */
     checkFullName() {
       var isValid = true;
       if (this.p_employee.fullName == null || this.p_employee.fullName == "") {
@@ -591,6 +617,10 @@ export default {
       }
       return isValid;
     },
+
+    /**
+     * Check phòng ban, đơn vị
+     */
     checkDepartmentId() {
       var isValid = true;
       // 1. Check không được để trống
@@ -611,7 +641,10 @@ export default {
       } else isValid = false;
       return isValid;
     },
-
+    
+    /**
+     * Check lại phòng ban đơn vị, khi nhập liệu
+     */
     validateDepartment() {
       if (this.required.departmentId.check == false) {
         this.checkDepartmentId();
@@ -664,6 +697,8 @@ export default {
       }
       return isValid;
     },
+    //#endregion
+    
 
     /**
      * Hàm so sánh nông ( so sánh từng giá trị của từng phần tử)

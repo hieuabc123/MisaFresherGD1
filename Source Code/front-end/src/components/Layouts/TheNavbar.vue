@@ -1,6 +1,5 @@
 <template>
-  <div class="the-navbar">
-    
+  <div class="the-navbar" :class="{ narrow: is_narrow }">
     <div class="navbar-header">
       <div class="menu-option">
         <a href class="mi icon-menu-option"></a>
@@ -12,6 +11,9 @@
             height="100%"
           />
         </a>
+      </div>
+      <div class="mi-24 toggle-menu" @click="is_narrow = !is_narrow">
+        <div class="mi icon-toggle-menu"></div>
       </div>
     </div>
     <div class="navbar-content">
@@ -86,6 +88,11 @@
 <script>
 export default {
   name: "TheNavbar",
+  data() {
+    return {
+      is_narrow: false,
+    };
+  },
 };
 </script>
 
@@ -99,7 +106,6 @@ export default {
   width: 180px;
   box-sizing: border-box;
   background: #393a3d;
-  overflow: hidden;
 }
 
 .the-navbar {
@@ -144,4 +150,32 @@ export default {
 .menu-item-icon {
   margin-right: 8px;
 }
+
+.toggle-menu {
+  position: absolute;
+  right: -40px;
+  cursor: pointer;
+}
+
+.narrow {
+  width: 50px;
+  .navbar-header{
+    justify-content: center;
+  }
+  .toggle-menu {
+    position: relative;
+    right: unset;
+    .icon-toggle-menu {
+      background-position: -316px -37px;
+      width: 16px;
+      height: 14px;
+    }
+  }
+  .menu-item-title,
+  .menu-option,
+  .logo-container {
+    display: none !important;
+  }
+}
+
 </style>

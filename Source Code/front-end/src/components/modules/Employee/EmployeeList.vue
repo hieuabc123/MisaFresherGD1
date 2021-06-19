@@ -21,7 +21,7 @@
             v-model="EmployeeList.filter"
             @input="onChangeInputFilter"
           />
-          <div class="mi icon-search pointer"></div>
+          <div class="mi icon-search pointer" @click="loadGridContent"></div>
         </div>
       </div>
       <!-- #endregion -->
@@ -34,7 +34,7 @@
             <tr>
               <!-- Check box -->
               <th class="checkbox">
-                <input type="checkbox" id="all" />
+                <input type="checkbox" id="all" v-model="checkbox_all"/>
                 <label for="all">
                   <div class="mi custom-checkbox"></div>
                 </label>
@@ -99,14 +99,26 @@
               v-for="(employee, index) in EmployeeList.employees"
               :key="employee.EmployeeId"
               :class="{
-                selected: EmployeeList.tr_selected_id == employee.employeeId,
+                selected:
+                  EmployeeList.list_id_selected[index] == employee.employeeId,
               }"
-              @click="trOnClick(employee.employeeId)"
+              @click.exact="trOnClick(employee.employeeId, index)"
+              @dblclick.exact="btnEditOnClick(employee.employeeId)"
+              @click.ctrl.exact="multiTrOnClick(employee.employeeId, index)"
+              @click.right.exact.prevent="
+                trOnRightClick(
+                  index,
+                  FunctionDropdown.index_selecting,
+                  employee.employeeId,
+                  employee.employeeCode,
+                  $event
+                )
+              "
             >
               <!-- Check Box -->
               <td class="checkbox">
-                <input type="checkbox" :id="index"  />
-                <label :for="index">
+                <input type="checkbox" :id="employee.employeeId" v-model="EmployeeList.checkbox_list[index]"/>
+                <label :for="employee.employeeId">
                   <div class="mi custom-checkbox"></div>
                 </label>
                 <div class="border-right"></div>
@@ -292,18 +304,21 @@ export default {
   },
   data() {
     return {
+      checkbox_all:false,
       time_out: null,
       //1. Đối tượng EmployeeList, đối tượng nhân viên cho component
       EmployeeList: {
         employees: [], // danh sách các nhân viên
         selecting_employee: {}, // nhân viên đang được chọn
-        employeeCopy: {},
+        employeeCopy: {},  
+        checkbox_list:[], // list danh sách check box
         isDone: true, // Kiểm tra load dữ liệu xong chưa
         pageCount: 1, // Tổng số trang
         pageInt: 1, // Số thứ tự của trang
         pageSize: 30, // Số bản ghi trên trang
         filter: "", // Giá trị cần tìm kiếm (filter)
         tr_selected_id: null, // Dòng nào đang được chọn (lấy id) or nhân viên có id đang được chọn
+        list_id_selected: [], // list số dòng đang được chọn
         total_employees: 0, // đếm tổng số bản ghi
         tr_selected_code: null, // Mã của nhân viên đang được chọn , Mã của nhân viên tương ứng với dòng đang được chọn
       },
@@ -338,6 +353,21 @@ export default {
         message: "",
       },
     };
+  },
+  watch:{
+    checkbox_all(){
+      debugger;// eslint-disable-line no-debugger
+      if(this.checkbox_all == true){
+        for(let i = 0; i < this.EmployeeList.checkbox_list.length; i++ ){
+          this.EmployeeList.checkbox_list[i] = true;
+        }
+      }
+      else{
+        for(let i = 0; i < this.EmployeeList.checkbox_list.length; i++ ){
+          this.EmployeeList.checkbox_list[i] = false;
+        }
+      }
+    },
   },
   methods: {
     //#region Các sự kiện
@@ -423,16 +453,74 @@ export default {
     //#endregion Sự kiện nút Toggle ở mục chức năng
 
     //#region 2. Xử lý Sự kiện input tìm kiếm và nút tìm kiếm
+    /**
+     * Sự kiện Khi nhập liệu input tìm kiếm
+     * Created By: NTHIEU (17/06/2021)
+     */
     onChangeInputFilter() {
       this.EmployeeList.pageInt = 1;
       clearTimeout(this.time_out);
-      this.time_out = setTimeout(this.loadDataPagingFilter, 500);
+      this.time_out = setTimeout(this.loadGridContent, 500);
     },
+
     //#endregion 2
 
     //#region 3 Sự kiện click vào từng dòng trong table
-    trOnClick(id) {
+
+    /**
+     * Sự kiện click vào từng dòng
+     * Created By: NTHIEU (19/06/2021)
+     */
+    trOnClick(id, index) {
+      this.EmployeeList.list_id_selected = [];
+      this.EmployeeList.list_id_selected[this.EmployeeList.pageSize] = null;
       this.EmployeeList.tr_selected_id = id;
+      this.EmployeeList.list_id_selected[index] = id;
+    },
+
+    /**
+     * Sự kiện khi click vào nhiều dòng (CTRL + CLICK)
+     * Created By: NTHIEU (19/06/2021)
+     */
+    multiTrOnClick(id, index) {
+      // this.EmployeeList.list_id_selected = [];
+      this.EmployeeList.list_id_selected.splice(index, 1, id);
+      console.log(index);
+    },
+
+    /**
+     * Sự kiện chuột phải vào từng dòng để hiển thị property
+     * Created By: NTHIEU (19/06/2021)
+     */
+    trOnRightClick(index, index_selecting, id, code, event) {
+      //0. Báo cho dropdown tự custom đây không phải là click out side
+      this.FunctionDropdown.isClickOutSide = false;
+      //0. Lấy Id của dòng đang chọn
+      this.EmployeeList.tr_selected_id = id;
+      //0. Lấy tên của employee đang được chọn
+      this.EmployeeList.tr_selected_code = code;
+      //1. Nếu giá trị trước khi truyền vào bằng giá trị sau khi truyền vào (Tức là click vào cùng 1 đối tượng liên tục)
+      if (index == index_selecting) {
+        //1.1 Thực hiện việc toggle
+        this.FunctionDropdown.isOpen = !this.FunctionDropdown.isOpen;
+      }
+      //2. Nếu giá trị trước khi truyền vào khác giá trị sau khi truyền vào (Tức là click vào đối tượng toogle khác)
+      else {
+        //2.1 Thực hiện việc mở dropdown
+        this.openFuntionDropdown();
+        //2.2 Gán giá trị sau khi click
+        this.FunctionDropdown.index_selecting = index;
+      }
+      //3 Lấy vị trí top và right của con trỏ chuột và gán cho drop down
+      var right = screen.width - event.clientX;
+      debugger // eslint-disable-line no-debugger
+      var top = event.clientY - 20 ;
+      this.FunctionDropdown.right = right;
+      this.FunctionDropdown.top = top;
+      //3.4 Kiểm tra nếu vị trí ở bên dưới quá thì đổi vị trí cho thằng dropdown lên trên
+      if (top > 600) {
+        this.FunctionDropdown.top -= 115;
+      }
     },
     //#endregion 3
 
@@ -552,6 +640,8 @@ export default {
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
     async loadGridContent() {
+      this.EmployeeList.checkbox_list[this.EmployeeList.pageSize]= false;
+      this.EmployeeList.list_id_selected[this.EmployeeList.pageSize] = null;
       await this.loadDataPagingFilter(); //dữ liệu Phân trang
     },
 
@@ -1142,5 +1232,4 @@ input[type="checkbox"]:checked + label .custom-checkbox {
 .displayNone {
   display: none !important;
 }
-
 </style>

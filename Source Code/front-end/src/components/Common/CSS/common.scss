@@ -91,6 +91,11 @@ select option {
     animation-duration: 0.4s;
 }
 
+.zoomIn-1 {
+    animation-name: zoomIn;
+    animation-duration: 0.2s;
+}
+
 @keyframes rotateIn {
     from {
         transform: rotate3d(0, 0, 1, 180deg);

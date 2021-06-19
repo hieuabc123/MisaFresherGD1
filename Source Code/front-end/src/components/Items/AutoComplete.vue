@@ -437,6 +437,7 @@ $icon-toggle: url("");
       @include Flex-Center;
       border-radius: 3px;
       color: $color-default;
+      cursor: pointer;
       &:hover {
         background: $background-hover;
         color: $color-hover;

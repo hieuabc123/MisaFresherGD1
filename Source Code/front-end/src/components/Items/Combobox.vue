@@ -227,11 +227,11 @@ $height: 32px;
 // Background Default:
 $background-default: #ffffff;
 // Background Hover:
-$background-hover: #ccc;
+$background-hover: #ebedf0;
 // Màu chữ default:
 $color-default: #000000;
 // Màu chữ hover:
-$color-hover: #000;
+$color-hover: #2ca01c;
 // border chung
 $border: 1px solid #babec5;
 // border khi focus vào
@@ -333,6 +333,7 @@ $icon-toggle: url("");
       @include Size(100%, $height);
       @include Flex-Center;
       color: $color-default;
+      cursor: pointer;
       &:hover {
         background: $background-hover;
         color: $color-hover;

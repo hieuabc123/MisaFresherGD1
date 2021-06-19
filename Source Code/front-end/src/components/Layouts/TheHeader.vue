@@ -1,8 +1,6 @@
 <template>
   <div class="the-header">
-    <div class="mi-24 toggle-menu">
-      <div class="mi icon-toggle-menu"></div>
-    </div>
+    
     <div class="header-branch">
       <div class="header-branch-name">
         CÔNG TY TNHH SẢN XUẤT - THƯƠNG MẠI - DỊCH VỤ QUI PHÚC
@@ -47,7 +45,7 @@ export default {
 .header-branch {
   display: flex;
   align-items: center;
-  margin-left: 8px;
+  margin-left: 40px;
 }
 .header-branch-icon {
   margin-left: 8px;
@@ -62,4 +60,5 @@ export default {
   display: flex;
   align-items: center;
 }
+
 </style>

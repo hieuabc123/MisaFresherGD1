@@ -1,7 +1,7 @@
 <template>
   <div class="popup" :class="{ 'popup-open': p_isOpen }">
     <div class="modal"></div>
-    <div class="popup-detail" :class="p_mode">
+    <div class="popup-detail zoomIn-1" :class="p_mode">
       <!-- <div class="mi icon-close X" @click="closePopup"></div> -->
       <div class="popup-content">
         <div class="mi icon icon-message"></div>

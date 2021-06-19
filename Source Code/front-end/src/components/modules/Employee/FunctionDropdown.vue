@@ -1,7 +1,7 @@
 <template>
   <div class="function" :style="{ right: right + 'px', top: top + 'px' }">
     <div
-      class="function-content"
+      class="function-content zoomIn-1"
       
       v-click-outside="onFocusOut"
     >
@@ -71,7 +71,15 @@ export default {
 .function-item {
   position: relative;
   height: 30px;
-  width: 100%;
+  width: calc(100% - 8px);
   background: #fff;
+  padding-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &:hover{
+    color: #2ca01c;
+    background: #f4f5f6;;
+  }
 }
 </style>
