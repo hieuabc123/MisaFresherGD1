@@ -114,3 +114,25 @@ input[type="checkbox"] {
         border: 1px solid #2ca01c;
     }
 }
+
+input[type="date"] {
+    padding-right: 5px;
+    font-style: italic;
+    text-transform: uppercase;
+    color: #babec5;
+}
+
+.visible {
+    color: #000 !important;
+    font-style: normal !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: #babec5;
+    opacity: 1;
+    display: block;
+    background: url("../../../assets/img/Sprites.64af8f61.svg") no-repeat -128px -310px;
+    width: 14px;
+    height: 16px;
+    border-width: thin;
+}

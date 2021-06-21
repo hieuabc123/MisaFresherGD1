@@ -520,9 +520,10 @@ export default {
       }
       //3 Lấy vị trí top và right của con trỏ chuột và gán cho drop down
       var right = screen.width - event.clientX;
-      debugger; // eslint-disable-line no-debugger
-      var top = event.clientY - 20;
-      this.FunctionDropdown.right = right;
+      console.log(right);
+      // debugger; // eslint-disable-line no-debugger
+      var top = event.clientY - 30;
+      this.FunctionDropdown.right = right -10;
       this.FunctionDropdown.top = top;
       //3.4 Kiểm tra nếu vị trí ở bên dưới quá thì đổi vị trí cho thằng dropdown lên trên
       if (top > 600) {
@@ -870,7 +871,7 @@ export default {
 .grid-content {
   position: absolute;
   top: 72px;
-  left: 0;
+  left: 20px;
   right: 0;
   bottom: 46px;
   box-sizing: border-box;
@@ -991,6 +992,7 @@ th {
   width: 120px;
 }
 .DateOfBirth {
+  text-align: center;
   width: 150px;
 }
 .IdentityNo {

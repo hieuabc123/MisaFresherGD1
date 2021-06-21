@@ -7,7 +7,12 @@
       <!-- #region 1. Dialog Header -->
       <div class="dialog-header">
         <div class="dialog-header-title">
-          <div class="mi mi-24 icon-close X" @click="btnXOnClick" content= "Đóng dialog" v-tippy="{ placement : 'bottom' }"></div>
+          <div
+            class="mi mi-24 icon-close X"
+            @click="btnXOnClick"
+            content="Đóng dialog"
+            v-tippy="{ placement: 'bottom' }"
+          ></div>
           <div class="mi mi-24 icon-question"></div>
         </div>
         <div class="dialog-header-content">
@@ -33,6 +38,11 @@
       <!-- #region 2. Dialog content -->
       <div class="dialog-content">
         <div class="form form-1">
+          <!-- -->
+          <!-- -->
+          <!------- Grid-LEFT  ----------->
+          <!-- -->
+          <!-- -->
           <div class="w-1/2 grid-left">
             <div class="grid-item" id="employeeCode">
               <div class="input-title">
@@ -102,7 +112,17 @@
             <div class="grid-item" id="dateOfBirth">
               <div class="input-title">Ngày sinh</div>
               <div class="input">
-                <input type="date" placeholder="DD/MM/YYYY" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" v-model="p_employee.dateOfBirth" />
+                <input
+                  type="date"
+                  placeholder="DD/MM/YYYY"
+                  pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}"
+                  v-model="p_employee.dateOfBirth"
+                  :class="{
+                    visible:
+                      p_employee.dateOfBirth != null &&
+                      p_employee.dateOfBirth != '',
+                  }"
+                />
               </div>
             </div>
             <div class="grid-item column-2" id="gender">
@@ -160,7 +180,15 @@
             <div class="grid-item" id="identityDate">
               <div class="input-title">Ngày cấp</div>
               <div class="input">
-                <input type="date" v-model="p_employee.identityDate" />
+                <input
+                  type="date"
+                  v-model="p_employee.identityDate"
+                  :class="{
+                    visible:
+                      p_employee.identityDate != null &&
+                      p_employee.identityDate != '',
+                  }"
+                />
               </div>
             </div>
             <div class="grid-item column-3" id="identityPlace">
@@ -242,7 +270,7 @@
       <!-- #endregion 3 -->
     </div>
     <!-- #endregion I -->
-    
+
     <!-- Nội dung phần hover required -->
     <div
       class="required"
@@ -343,7 +371,7 @@ export default {
     };
   },
   //#endregion
-  
+
   methods: {
     //#region I. Xử lý các sự kiện
     //#region 1. Sự kiện hover
@@ -430,8 +458,8 @@ export default {
       this.popup.isOpen = false;
     },
     //#endregion 2
-    
-    
+
+    //#region 3 Xử lý sự kiện click vào nút X tắt dialog
     /**
      * Sự kiện click vào nút X tắt dialog
      * Created By: NTHIEU (16/06/2021)
@@ -445,6 +473,8 @@ export default {
           "Dữ liệu đã bị thay đổi, bạn có muốn cất không ?"
         );
     },
+    //#endregion 3
+    
     /**
      * Sự kiện click vào nút Cất
      * Created By: NTHIEU (17/06/2021)
@@ -452,7 +482,7 @@ export default {
     async btnSaveOnClick() {
       this.process_isdone = false;
       if (this.validate()) {
-        this.popup.isOpen=false;
+        this.popup.isOpen = false;
         switch (this.p_form_mode) {
           case "add":
             await this.addNewEmployee();
@@ -465,7 +495,6 @@ export default {
             break;
         }
         if (this.process_isdone == true) this.closeDialogEmployeeDetail();
-        
       } else {
         this.openPopup("warning", this.p_employee.status);
       }
@@ -520,16 +549,16 @@ export default {
         .post(url, data)
         .then((res) => {
           if (res.data.statusCode >= 400 && res.data.statusCode < 500)
-          if(res.data.data=="EmployeeCode"){
-            this.openPopup("warning", res.data.userMsg);
-            this.required.employeeCode.check= false;
-            this.required.employeeCode.message = res.data.userMsg;
-          }
-            
+            if (res.data.data == "EmployeeCode") {
+              this.openPopup("warning", res.data.userMsg);
+              this.required.employeeCode.check = false;
+              this.required.employeeCode.message = res.data.userMsg;
+            }
+
           if (res.data.statusCode == 200) {
             this.$emit("loadComponent");
             this.process_isdone = true;
-            this.$emit("openToast","success","Thêm mới thành công");
+            this.$emit("openToast", "success", "Thêm mới thành công");
           }
         })
         .catch((error) => {
@@ -557,7 +586,7 @@ export default {
             // debugger; // eslint-disable-line no-debugger
             this.$emit("loadComponent");
             this.process_isdone = true;
-            this.$emit("openToast","success","sửa thành công");
+            this.$emit("openToast", "success", "sửa thành công");
           }
         })
         .catch((error) => {
@@ -641,7 +670,7 @@ export default {
       } else isValid = false;
       return isValid;
     },
-    
+
     /**
      * Check lại phòng ban đơn vị, khi nhập liệu
      */
@@ -698,7 +727,6 @@ export default {
       return isValid;
     },
     //#endregion
-    
 
     /**
      * Hàm so sánh nông ( so sánh từng giá trị của từng phần tử)
@@ -714,14 +742,17 @@ export default {
       }
       //3. Kiểm tra từng giá trị value tương ứng với từng key
       for (let key of keys1) {
-        if(key!="status")
-        if (object1[key] !== object2[key]) {
-          if((object1[key] == null && object2[key] == "") || (object1[key] == "" && object2[key] == null)){
-            debugger // eslint-disable-line no-debugger
-            continue;
-          } 
-          return false;
-        }
+        if (key != "status")
+          if (object1[key] !== object2[key]) {
+            if (
+              (object1[key] == null && object2[key] == "") ||
+              (object1[key] == "" && object2[key] == null)
+            ) {
+              debugger; // eslint-disable-line no-debugger
+              continue;
+            }
+            return false;
+          }
       }
       //4. kết quả trả về default
       return true;

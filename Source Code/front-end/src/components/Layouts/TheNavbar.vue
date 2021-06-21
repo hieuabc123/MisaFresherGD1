@@ -17,67 +17,67 @@
       </div>
     </div>
     <div class="navbar-content">
-      <router-link to="/" class="menu-item">
+      <router-link to="1" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-dashboard"></div>
         <div class="menu-item-title">Tổng quan</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="2" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-cash"></div>
         <div class="menu-item-title">Tiền mặt</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="3" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-bank"></div>
         <div class="menu-item-title">Tiền gửi</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="4" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-purchase"></div>
         <div class="menu-item-title">Mua hàng</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="5" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-sale"></div>
         <div class="menu-item-title">Bán hàng</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="6" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-invoice"></div>
         <div class="menu-item-title">Quản lý hóa đơn</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="7" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-stock"></div>
         <div class="menu-item-title">Kho</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="8" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-tool"></div>
         <div class="menu-item-title">Công cụ dụng cụ</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="9" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-fixed-assets"></div>
         <div class="menu-item-title">Tài sản cố định</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="10" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-tax"></div>
         <div class="menu-item-title">Thuế</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="11" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-price"></div>
         <div class="menu-item-title">Giá thành</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="12" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-general"></div>
         <div class="menu-item-title">Tổng hợp</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="13" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-budget"></div>
         <div class="menu-item-title">Ngân sách</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="14" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-report"></div>
         <div class="menu-item-title">Báo cáo</div>
       </router-link>
-      <router-link to="/" class="menu-item">
+      <router-link to="15" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-finance"></div>
         <div class="menu-item-title">Phân tích tài chính</div>
       </router-link>
-      <router-link to="/Employee" class="menu-item">
+      <router-link to="Employee" class="menu-item">
         <div class="menu-item-icon mi mi-20 icon-employee"></div>
         <div class="menu-item-title">Nhân viên</div>
       </router-link>
@@ -145,8 +145,13 @@ export default {
   height: 42px;
   align-items: center;
   padding-left: 16px;
+  &:hover{
+    background: #616164;
+  }
 }
-
+.router-link-exact-active{
+  background: #616164;
+}
 .menu-item-icon {
   margin-right: 8px;
 }
