@@ -7,7 +7,7 @@
       <!-- #region 1. Dialog Header -->
       <div class="dialog-header">
         <div class="dialog-header-title">
-          <div class="mi mi-24 icon-close X" @click="btnXOnClick" title="Đóng dialog"></div>
+          <div class="mi mi-24 icon-close X" @click="btnXOnClick" content= "Đóng dialog" v-tippy="{ placement : 'bottom' }"></div>
           <div class="mi mi-24 icon-question"></div>
         </div>
         <div class="dialog-header-content">
@@ -716,6 +716,10 @@ export default {
       for (let key of keys1) {
         if(key!="status")
         if (object1[key] !== object2[key]) {
+          if((object1[key] == null && object2[key] == "") || (object1[key] == "" && object2[key] == null)){
+            debugger // eslint-disable-line no-debugger
+            continue;
+          } 
           return false;
         }
       }

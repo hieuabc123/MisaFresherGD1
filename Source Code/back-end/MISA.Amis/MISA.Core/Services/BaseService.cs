@@ -222,10 +222,11 @@ namespace MISA.Core.Services
                     var isExists = _baseRepository.CheckDuplicate(propName, propValue.ToString(), id);
                     if (isExists == true)
                     {
+                        Type type = Type.GetType(propName);
                         isValid = false;
                         if(propName == "EmployeeCode")
-                        entity.Status = string.Format(Properties.Resources.error_duplicate, "Mã nhân viên", propValue);
-                        else entity.Status = string.Format(Properties.Resources.error_duplicate, propName, propValue);
+                        entity.Status = string.Format(Properties.Resources.error_duplicate, ExcelResources.EmployeeCode, propValue);
+                        else entity.Status = string.Format(Resources.error_duplicate, propName, propValue);
                     }
                 }
             };

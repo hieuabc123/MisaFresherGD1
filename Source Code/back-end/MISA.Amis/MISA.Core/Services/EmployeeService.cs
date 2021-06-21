@@ -162,7 +162,7 @@ namespace MISA.Core.Services
                     worksheet.Cells[3, j].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 }
             }
-            //3.1 Tạo header title cho từng cột và
+            //3.1 Tạo header title cho từng cột
             worksheet.Cells[3, (int)(ExcelEmployeeColumn.Sort)].Value = ExcelResources.Sort;
             worksheet.Cells[3, (int)(ExcelEmployeeColumn.EmployeeCode)].Value = ExcelResources.EmployeeCode;
             worksheet.Cells[3, (int)(ExcelEmployeeColumn.FullName)].Value = ExcelResources.FullName;

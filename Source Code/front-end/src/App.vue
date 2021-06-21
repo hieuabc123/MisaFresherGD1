@@ -30,6 +30,7 @@ export default {
   display: flex;
   flex-wrap: nowrap;
   height: 100vh;
+  overflow: hidden;
 }
 .layout-left{
   flex-grow: 1;

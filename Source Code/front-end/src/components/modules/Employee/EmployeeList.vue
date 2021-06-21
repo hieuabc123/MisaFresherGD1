@@ -34,7 +34,7 @@
             <tr>
               <!-- Check box -->
               <th class="checkbox">
-                <input type="checkbox" id="all" v-model="checkbox_all"/>
+                <input type="checkbox" id="all" v-model="checkbox_all" />
                 <label for="all">
                   <div class="mi custom-checkbox"></div>
                 </label>
@@ -117,7 +117,11 @@
             >
               <!-- Check Box -->
               <td class="checkbox">
-                <input type="checkbox" :id="employee.employeeId" v-model="EmployeeList.checkbox_list[index]"/>
+                <input
+                  type="checkbox"
+                  :id="employee.employeeId"
+                  v-model="EmployeeList.checkbox_list[index]"
+                />
                 <label :for="employee.employeeId">
                   <div class="mi custom-checkbox"></div>
                 </label>
@@ -175,6 +179,10 @@
             </tr>
           </tbody>
         </table>
+        <div class="no-data" v-if="EmployeeList.employees == null">
+          <div class="img"></div>
+          <span class="text-warn">không có dữ liệu</span>
+        </div>
       </div>
       <!-- #endregion -->
 
@@ -304,14 +312,14 @@ export default {
   },
   data() {
     return {
-      checkbox_all:false,
+      checkbox_all: false,
       time_out: null,
       //1. Đối tượng EmployeeList, đối tượng nhân viên cho component
       EmployeeList: {
         employees: [], // danh sách các nhân viên
         selecting_employee: {}, // nhân viên đang được chọn
-        employeeCopy: {},  
-        checkbox_list:[], // list danh sách check box
+        employeeCopy: {},
+        checkbox_list: [], // list danh sách check box
         isDone: true, // Kiểm tra load dữ liệu xong chưa
         pageCount: 1, // Tổng số trang
         pageInt: 1, // Số thứ tự của trang
@@ -354,16 +362,15 @@ export default {
       },
     };
   },
-  watch:{
-    checkbox_all(){
-      debugger;// eslint-disable-line no-debugger
-      if(this.checkbox_all == true){
-        for(let i = 0; i < this.EmployeeList.checkbox_list.length; i++ ){
+  watch: {
+    checkbox_all() {
+      // debugger; // eslint-disable-line no-debugger
+      if (this.checkbox_all == true) {
+        for (let i = 0; i < this.EmployeeList.checkbox_list.length; i++) {
           this.EmployeeList.checkbox_list[i] = true;
         }
-      }
-      else{
-        for(let i = 0; i < this.EmployeeList.checkbox_list.length; i++ ){
+      } else {
+        for (let i = 0; i < this.EmployeeList.checkbox_list.length; i++) {
           this.EmployeeList.checkbox_list[i] = false;
         }
       }
@@ -513,8 +520,8 @@ export default {
       }
       //3 Lấy vị trí top và right của con trỏ chuột và gán cho drop down
       var right = screen.width - event.clientX;
-      debugger // eslint-disable-line no-debugger
-      var top = event.clientY - 20 ;
+      debugger; // eslint-disable-line no-debugger
+      var top = event.clientY - 20;
       this.FunctionDropdown.right = right;
       this.FunctionDropdown.top = top;
       //3.4 Kiểm tra nếu vị trí ở bên dưới quá thì đổi vị trí cho thằng dropdown lên trên
@@ -640,7 +647,7 @@ export default {
      * CreatedBy: Nguyễn Trung Hiếu (09/5/2021)
      ********************************************************/
     async loadGridContent() {
-      this.EmployeeList.checkbox_list[this.EmployeeList.pageSize]= false;
+      this.EmployeeList.checkbox_list[this.EmployeeList.pageSize] = false;
       this.EmployeeList.list_id_selected[this.EmployeeList.pageSize] = null;
       await this.loadDataPagingFilter(); //dữ liệu Phân trang
     },
@@ -1231,5 +1238,24 @@ input[type="checkbox"]:checked + label .custom-checkbox {
 }
 .displayNone {
   display: none !important;
+}
+
+.no-data {
+  position: sticky;
+  margin-top: 70px;
+  width: 132px;
+  left: 45%;
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+  span{
+    text-align: center;
+  }
+  .img {
+    background: url('../../../assets/img/bg_report_nodata.76e50bd8.svg') no-repeat 0 0;
+    width: 132px;
+    height: 76px;
+    margin-bottom: 30px;
+  }
 }
 </style>
