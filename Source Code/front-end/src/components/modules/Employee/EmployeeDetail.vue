@@ -518,7 +518,7 @@ export default {
             break;
         }
         if (this.process_isdone == true) {
-          this.$emit("getNewEmployee");
+          this.$emit("btnAddOnClick");
           this.$emit("update:p_form_mode", "add");
         }
       } else {
@@ -580,8 +580,12 @@ export default {
       await axios
         .put(url, data)
         .then((res) => {
-          if (res.data.statusCode >= 400 && res.data.statusCode < 500)
+          if (res.data.statusCode >= 400 && res.data.statusCode < 500){
             this.openPopup("warning", res.data.userMsg);
+            this.required.employeeCode.check = false;
+            this.required.employeeCode.message = res.data.userMsg;
+          }
+            
           if (res.data.statusCode == 200) {
             // debugger; // eslint-disable-line no-debugger
             this.$emit("loadComponent");
@@ -748,10 +752,9 @@ export default {
               (object1[key] == null && object2[key] == "") ||
               (object1[key] == "" && object2[key] == null)
             ) {
-              debugger; // eslint-disable-line no-debugger
               continue;
             }
-            return false;
+            else return false;
           }
       }
       //4. kết quả trả về default

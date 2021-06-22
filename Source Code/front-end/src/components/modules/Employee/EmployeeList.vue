@@ -256,6 +256,7 @@
           `Bạn có muốn xóa nhân viên có mã: ${EmployeeList.tr_selected_code} không ?`
         )
       "
+      :count_tr_selected="EmployeeList.count_tr_selected"
     />
     <EmployeeDetail
       :is_open.sync="EmployeeDetail.isOpen"
@@ -266,7 +267,7 @@
       :p_form_mode.sync="EmployeeDetail.form_mode"
       @openPopup="openPopup"
       @loadComponent="loadGridContent"
-      @getNewEmployee="getNewEmployee"
+      @btnAddOnClick="btnAddOnClick"
       @openToast="openToast"
     />
     <Toast
@@ -329,6 +330,7 @@ export default {
         list_id_selected: [], // list số dòng đang được chọn
         total_employees: 0, // đếm tổng số bản ghi
         tr_selected_code: null, // Mã của nhân viên đang được chọn , Mã của nhân viên tương ứng với dòng đang được chọn
+        count_tr_selected:0, //đếm dòng tr được chọn
       },
       //2. Đối tượng Component Function Dropdown (ở mục chức năng)
       FunctionDropdown: {
@@ -479,6 +481,7 @@ export default {
      * Created By: NTHIEU (19/06/2021)
      */
     trOnClick(id, index) {
+      this.EmployeeList.count_tr_selected = 1;
       this.EmployeeList.list_id_selected = [];
       this.EmployeeList.list_id_selected[this.EmployeeList.pageSize] = null;
       this.EmployeeList.tr_selected_id = id;
@@ -491,6 +494,7 @@ export default {
      */
     multiTrOnClick(id, index) {
       // this.EmployeeList.list_id_selected = [];
+      this.count_tr_selected +=1 ;
       this.EmployeeList.list_id_selected.splice(index, 1, id);
       console.log(index);
     },
@@ -896,7 +900,7 @@ export default {
 }
 .left-pagination {
   position: absolute;
-  left: 0;
+  left: 20px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -964,6 +968,13 @@ td:not(:last-child) {
   border-right: 1px dotted #c7c7c7;
 }
 
+thead{
+  th{
+    text-align: left;
+    padding-left: 8px;
+  }
+}
+
 td {
   padding: 8px;
   height: 48px;
@@ -1019,6 +1030,7 @@ th {
   position: sticky;
   right: 0;
   background: #fff;
+  text-align: center;
 }
 .border-left {
   position: absolute;

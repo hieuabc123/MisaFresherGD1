@@ -73,17 +73,17 @@ export default {
       type: Array,
       default: null,
     },
-    validate_class:{
-      default:"",
-    }
+    validate_class: {
+      default: "",
+    },
   },
   watch: {
     // options(){
     //   this.GetDefaultValue();
     // },
-    // model_value(){
-    //   this.GetDefaultValue();
-    // }
+    model_value() {
+      this.GetDefaultValue();
+    },
   },
   data() {
     return {
@@ -172,11 +172,11 @@ export default {
     /**
      * Sự kiện focusOut
      */
-    focusOut(){
+    focusOut() {
       this.$emit("focusOut");
     },
 
-    mouseLeave(){
+    mouseLeave() {
       this.$emit("mouseLeave");
     },
     //#endregion
@@ -205,13 +205,17 @@ export default {
       this.data_filter = this.options;
 
       //2. Lấy giá trị mặc định
-      if (this.data_filter != null)
-        this.data_filter.forEach((option) => {
-          if (option[this.value_key] == this.model_value) {
-            this.label_value = option[this.label_key];
-            this.option_selected = option[this.value_key];
-          }
-        });
+      if (this.data_filter != null) {
+        if (this.model_value != null)
+          this.data_filter.forEach((option) => {
+            if (option[this.value_key] == this.model_value) {
+              this.label_value = option[this.label_key];
+              this.option_selected = option[this.value_key];
+            }
+          });
+        else this.label_value = null;
+      }
+
       // debugger // eslint-disable-line no-debugger
     },
 
@@ -253,11 +257,14 @@ export default {
           is_availble = true;
         }
       });
-      if (this.label_value !=null && this.label_value != "" && is_availble == false) {
-        this.$emit("update:model_value", "not_availble")// eslint-disable-line no-debugger
-      }
-      else if (this.label_value == null || this.label_value == ""){
-        this.$emit("update:model_value", null)
+      if (
+        this.label_value != null &&
+        this.label_value != "" &&
+        is_availble == false
+      ) {
+        this.$emit("update:model_value", "not_availble"); // eslint-disable-line no-debugger
+      } else if (this.label_value == null || this.label_value == "") {
+        this.$emit("update:model_value", null);
       }
       this.$emit("focusOut");
       this.isShow = false;
@@ -267,7 +274,7 @@ export default {
     /**
      * Sự kiện click vào autocomplete
      */
-    autocompleteOnclick(){
+    autocompleteOnclick() {
       this.$emit("p_click");
       this.FilterData();
     },
@@ -434,10 +441,14 @@ $icon-toggle: url("");
     /* -------- option ---------- */
     .option {
       @include Size(100%, $height);
+      width: calc(100% - 16px);
       @include Flex-Center;
+      justify-content: unset;
+      text-align: left;
       border-radius: 3px;
       color: $color-default;
       cursor: pointer;
+      padding-left: 16px;
       &:hover {
         background: $background-hover;
         color: $color-hover;
@@ -462,7 +473,7 @@ $icon-toggle: url("");
   color: #fff !important;
 }
 
-.validate{
+.validate {
   border-color: red !important;
 }
 </style>

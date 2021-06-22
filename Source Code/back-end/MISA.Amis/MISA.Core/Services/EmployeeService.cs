@@ -18,6 +18,10 @@ using System.Threading.Tasks;
 
 namespace MISA.Core.Services
 {
+    /// <summary>
+    /// Service nhân viên
+    /// </summary>
+    /// Created By: NTHIEU (18/06/2021)
     public class EmployeeService : BaseService<Employee>, IEmployeeService
     {
         #region Declare
@@ -190,12 +194,12 @@ namespace MISA.Core.Services
 
             //5. Set Style riêng cho các hàng
             worksheet.Column((int)(ExcelEmployeeColumn.Sort)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Column((int)(ExcelEmployeeColumn.EmployeeCode)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Column((int)(ExcelEmployeeColumn.Gender)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //worksheet.Column((int)(ExcelEmployeeColumn.EmployeeCode)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //worksheet.Column((int)(ExcelEmployeeColumn.Gender)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Column((int)(ExcelEmployeeColumn.DateOfBirth)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Column((int)(ExcelEmployeeColumn.AccountNumber)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-            worksheet.Column((int)(ExcelEmployeeColumn.Position)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Column((int)(ExcelEmployeeColumn.BankName)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            //worksheet.Column((int)(ExcelEmployeeColumn.AccountNumber)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            //worksheet.Column((int)(ExcelEmployeeColumn.Position)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //worksheet.Column((int)(ExcelEmployeeColumn.BankName)).Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
             //5. Gán từng giá trị của nhân viên cho excel
             int i = 0;
