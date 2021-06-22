@@ -502,14 +502,19 @@ export default {
         );
     },
     //#endregion 3
+    
+    //#region 4 Xử lý sự kiện click vào nút Cất, Cất và thêm
 
     /**
      * Sự kiện click vào nút Cất
      * Created By: NTHIEU (17/06/2021)
      */
     async btnSaveOnClick() {
+      //1. Bắt đầu kiểm tra duyệt lại tiến trình
       this.process_isdone = false;
+      //2. Nếu Validate hợp lệ thì cho tiếp tục cất dữ liệu
       if (this.validate()) {
+        //2.1. Thực hiện tiến trình
         this.popup.isOpen = false;
         switch (this.p_form_mode) {
           case "add":
@@ -522,8 +527,11 @@ export default {
             await this.addNewEmployee();
             break;
         }
+        //2.2. Nếu tiến trình hoàn thành thì tắt form dialog
         if (this.process_isdone == true) this.closeDialogEmployeeDetail();
-      } else {
+      } 
+      //3. Còn lại nếu lỗi thì hiển thị thông báo cho người dùng
+      else {
         this.openPopup("warning", this.p_employee.status);
       }
     },
@@ -553,93 +561,13 @@ export default {
         this.openPopup("warning", this.p_employee.status);
       }
     },
-
+    //#endregion 4
+    
     //#endregion I
 
     //#region II. method
-    /**
-     * Đóng form dialog Nhân viên
-     * Created By: NTHIEU (16/06/2021)
-     */
-    closeDialogEmployeeDetail() {
-      var isOpen = false;
-      this.$emit("update:is_open", isOpen);
-    },
-
-    /**
-     * Insert New Employee to Server (Thêm mới nhân viên)
-     * Created By: NTHIEU (17/06/2021)
-     */
-    async addNewEmployee() {
-      var url = baseUrl + "/employees";
-      var data = this.p_employee;
-      await axios
-        .post(url, data)
-        .then((res) => {
-          if (res.data.statusCode >= 400 && res.data.statusCode < 500)
-            if (res.data.data == "EmployeeCode") {
-              this.openPopup("warning", res.data.userMsg);
-              this.required.employeeCode.check = false;
-              this.required.employeeCode.message = res.data.userMsg;
-            }
-
-          if (res.data.statusCode == 200) {
-            this.$emit("loadComponent");
-            this.process_isdone = true;
-            this.$emit("openToast", "success", "Thêm mới thành công");
-          }
-        })
-        .catch((error) => {
-          this.openPopup(
-            "warning",
-            "Có lỗi với hệ thống vui lòng liên hệ Misa để được trợ giúp:" +
-              error
-          );
-        });
-    },
-
-    /**
-     * Update Employee to Server (Cập nhật thông tin nhân viên)
-     * Created By: NTHIEU (17/06/2021)
-     */
-    async updateEmployee() {
-      var url = baseUrl + "/employees/" + this.p_employee.employeeId;
-      var data = this.p_employee;
-      await axios
-        .put(url, data)
-        .then((res) => {
-          if (res.data.statusCode >= 400 && res.data.statusCode < 500) {
-            this.openPopup("warning", res.data.userMsg);
-            this.required.employeeCode.check = false;
-            this.required.employeeCode.message = res.data.userMsg;
-          }
-
-          if (res.data.statusCode == 200) {
-            // debugger; // eslint-disable-line no-debugger
-            this.$emit("loadComponent");
-            this.process_isdone = true;
-            this.$emit("openToast", "success", "sửa thành công");
-          }
-        })
-        .catch((error) => {
-          this.openPopup(
-            "warning",
-            "Có lỗi với hệ thống vui lòng liên hệ Misa để được trợ giúp:" +
-              error
-          );
-        });
-    },
-
-    /**
-     * Event focus on EmployeeCode's input
-     * Created By: NTHIEU (16/06/2021)
-     */
-    autoFocusEmployeeCode() {
-      // debugger; // eslint-disable-line no-debugger
-      this.$refs.employeeCode.focus();
-    },
-
-    ///#region Validate
+    
+    //#region Validate dữ liệu client
     /**
      * Check Mã nhân viên
      */
@@ -787,8 +715,91 @@ export default {
         return false;
       }
     },
-    //#endregion
+    //#endregion validate
 
+    /**
+     * Đóng form dialog Nhân viên
+     * Created By: NTHIEU (16/06/2021)
+     */
+    closeDialogEmployeeDetail() {
+      var isOpen = false;
+      this.$emit("update:is_open", isOpen);
+    },
+
+    /**
+     * Insert New Employee to Server (Thêm mới nhân viên)
+     * Created By: NTHIEU (17/06/2021)
+     */
+    async addNewEmployee() {
+      var url = baseUrl + "/employees";
+      var data = this.p_employee;
+      await axios
+        .post(url, data)
+        .then((res) => {
+          if (res.data.statusCode >= 400 && res.data.statusCode < 500)
+            if (res.data.data == "EmployeeCode") {
+              this.openPopup("warning", res.data.userMsg);
+              this.required.employeeCode.check = false;
+              this.required.employeeCode.message = res.data.userMsg;
+            }
+
+          if (res.data.statusCode == 200) {
+            this.$emit("loadComponent");
+            this.process_isdone = true;
+            this.$emit("openToast", "success", "Thêm mới thành công");
+          }
+        })
+        .catch((error) => {
+          this.openPopup(
+            "warning",
+            "Có lỗi với hệ thống vui lòng liên hệ Misa để được trợ giúp:" +
+              error
+          );
+        });
+    },
+
+    /**
+     * Update Employee to Server (Cập nhật thông tin nhân viên)
+     * Created By: NTHIEU (17/06/2021)
+     */
+    async updateEmployee() {
+      var url = baseUrl + "/employees/" + this.p_employee.employeeId;
+      var data = this.p_employee;
+      await axios
+        .put(url, data)
+        .then((res) => {
+          if (res.data.statusCode >= 400 && res.data.statusCode < 500) {
+            this.openPopup("warning", res.data.userMsg);
+            this.required.employeeCode.check = false;
+            this.required.employeeCode.message = res.data.userMsg;
+          }
+
+          if (res.data.statusCode == 200) {
+            // debugger; // eslint-disable-line no-debugger
+            this.$emit("loadComponent");
+            this.process_isdone = true;
+            this.$emit("openToast", "success", "sửa thành công");
+          }
+        })
+        .catch((error) => {
+          this.openPopup(
+            "warning",
+            "Có lỗi với hệ thống vui lòng liên hệ Misa để được trợ giúp:" +
+              error
+          );
+        });
+    },
+
+    /**
+     * Event focus on EmployeeCode's input
+     * Created By: NTHIEU (16/06/2021)
+     */
+    autoFocusEmployeeCode() {
+      // debugger; // eslint-disable-line no-debugger
+      this.$refs.employeeCode.focus();
+    },
+    
+    
     /**
      * Hàm so sánh nông ( so sánh từng giá trị của từng phần tử)
      * Created By: NTHIEU (18/06/2021)

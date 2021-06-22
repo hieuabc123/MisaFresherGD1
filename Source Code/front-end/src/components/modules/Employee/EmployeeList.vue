@@ -878,7 +878,7 @@ export default {
   position: absolute;
   top: 72px;
   left: 20px;
-  right: 0;
+  right: 16px;
   bottom: 46px;
   box-sizing: border-box;
   /* border: 1px solid black; */
