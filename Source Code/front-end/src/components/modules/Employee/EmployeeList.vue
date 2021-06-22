@@ -12,12 +12,14 @@
     <div class="grid">
       <!-- #region 1. Grid-header -->
       <div class="grid-header">
-        <div class="mi icon-load" @click="loadGridContent"></div>
-        <div class="mi icon-excel pointer" @click="getExportData"></div>
+        <div class="mi icon-load" @click="loadGridContent" content="Lấy lại dữ liệu"
+            v-tippy="{ placement: 'bottom' }"></div>
+        <div class="mi icon-excel pointer" @click="getExportData" content="Xuất file Excel"
+            v-tippy="{ placement: 'left' }"></div>
         <div class="input-search">
           <input
             type="text"
-            placeholder="tìm kiếm theo mã, tên nhân viên"
+            placeholder="Tìm kiếm theo mã, tên nhân viên"
             v-model="EmployeeList.filter"
             @input="onChangeInputFilter"
           />
@@ -1070,7 +1072,8 @@ input {
     box-shadow: 0 0 5pt #d3d3d3;
   }
   &:focus {
-    outline-color: #2ca01c;
+    border: 1px solid #2ca01c;
+    outline: none;
   }
 }
 

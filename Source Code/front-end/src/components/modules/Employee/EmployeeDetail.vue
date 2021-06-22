@@ -10,10 +10,14 @@
           <div
             class="mi mi-24 icon-close X"
             @click="btnXOnClick"
-            content="Đóng dialog"
+            content="Đóng (ESC)"
             v-tippy="{ placement: 'bottom' }"
           ></div>
-          <div class="mi mi-24 icon-question"></div>
+          <div
+            class="mi mi-24 icon-question pointer"
+            content="Giúp (F1)"
+            v-tippy="{ placement: 'bottom' }"
+          ></div>
         </div>
         <div class="dialog-header-content">
           <div class="popup-title">Thông tin nhân viên</div>
@@ -122,6 +126,7 @@
                       p_employee.dateOfBirth != null &&
                       p_employee.dateOfBirth != '',
                   }"
+                  max="9999-01-01"
                 />
               </div>
             </div>
@@ -174,7 +179,14 @@
             <div class="grid-item column-2" id="identityNo">
               <div class="input-title">Số CMND</div>
               <div class="input">
-                <input type="text" v-model="p_employee.identityNo" />
+                <input
+                  type="text"
+                  v-model="p_employee.identityNo"
+                  @input="checkIdentityNo(p_employee.identityNo)"
+                  @mouseover="hoverInIdentityCode"
+                  @mouseleave="mouseLeave"
+                  :class="{ validate: !required.identityNo.check }"
+                />
               </div>
             </div>
             <div class="grid-item" id="identityDate">
@@ -188,6 +200,7 @@
                       p_employee.identityDate != null &&
                       p_employee.identityDate != '',
                   }"
+                  max="9999-01-01"
                 />
               </div>
             </div>
@@ -351,6 +364,10 @@ export default {
           check: true,
           message: null,
         },
+        identityNo: {
+          check: true,
+          message: null,
+        },
         event: {
           is_hover: false,
           message: null,
@@ -416,6 +433,17 @@ export default {
         this.required.event.is_hover = false;
       }
     },
+
+    hoverInIdentityCode(event) {
+      if (this.required.identityNo.check == false) {
+        this.required.event.message = this.required.identityNo.message;
+        this.getPositionOfMouse(event);
+      } else {
+        clearTimeout(this.time_out);
+        this.required.event.is_hover = false;
+      }
+    },
+
     /**
      * Sự kiện rời chuột ra ngoài phần tử
      */
@@ -474,7 +502,7 @@ export default {
         );
     },
     //#endregion 3
-    
+
     /**
      * Sự kiện click vào nút Cất
      * Created By: NTHIEU (17/06/2021)
@@ -580,12 +608,12 @@ export default {
       await axios
         .put(url, data)
         .then((res) => {
-          if (res.data.statusCode >= 400 && res.data.statusCode < 500){
+          if (res.data.statusCode >= 400 && res.data.statusCode < 500) {
             this.openPopup("warning", res.data.userMsg);
             this.required.employeeCode.check = false;
             this.required.employeeCode.message = res.data.userMsg;
           }
-            
+
           if (res.data.statusCode == 200) {
             // debugger; // eslint-disable-line no-debugger
             this.$emit("loadComponent");
@@ -695,12 +723,15 @@ export default {
       var check_fullName = this.checkFullName();
       //3. Kiểm tra để trông thông tin đơn vị
       var check_departmentId = this.checkDepartmentId();
+      //4. Kiểm tra định dạng số CMND
+      var check_identityNo = this.checkIdentityNo();
 
       //4. Kiểm tra xem tát cả các trường có thỏa mãn điều kiện không
       if (
         check_employeeCode == true &&
         check_fullName == true &&
-        check_departmentId == true
+        check_departmentId == true &&
+        check_identityNo == true
       )
         isValid = true;
       else isValid = false;
@@ -730,6 +761,32 @@ export default {
       }
       return isValid;
     },
+
+    /**
+     * Check định dạng của CMT, CMND
+     * Created By: NTHIEU (17/06/2021)
+     */
+    checkIdentityNo() {
+      if (
+        this.p_employee.identityNo == "" ||
+        this.p_employee.identityNo == null
+      ) {
+        this.required.identityNo.check = true;
+        return true;
+      }
+      var number = /^\d+$/;
+      let isnum = number.test(this.p_employee.identityNo);
+      if (isnum == true) {
+        this.required.identityNo.check = true;
+        return true;
+      } else {
+        this.required.identityNo.check = false;
+        this.required.identityNo.message =
+          "Thông tin số CMND không đúng định dạng";
+        this.p_employee.status = "Thông tin số CMND không đúng định dạng";
+        return false;
+      }
+    },
     //#endregion
 
     /**
@@ -753,8 +810,7 @@ export default {
               (object1[key] == "" && object2[key] == null)
             ) {
               continue;
-            }
-            else return false;
+            } else return false;
           }
       }
       //4. kết quả trả về default
@@ -858,7 +914,7 @@ $dialog_height: auto;
     position: absolute;
     left: 0;
     height: 100%;
-    width: calc(100% - 74px);
+    width: calc(100% - 74px - 32px);
     display: flex;
     align-items: center;
     padding-left: 32px;

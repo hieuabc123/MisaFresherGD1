@@ -38,7 +38,7 @@ namespace MISA.Core.Entities.Directory
         /// 1- Nam
         /// 2- Khác
         /// </summary>
-        public int Gender { get; set; }
+        public int Gender { get; set; } = 2;
 
 
         /// <summary>

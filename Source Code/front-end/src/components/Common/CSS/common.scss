@@ -127,6 +127,10 @@ input[type="date"] {
     font-style: normal !important;
 }
 
+* {
+    outline: none;
+}
+
 input[type="date"]::-webkit-calendar-picker-indicator {
     color: #babec5;
     opacity: 1;
@@ -136,3 +140,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     height: 16px;
     border-width: thin;
 }
+
+// .pointer {
+//     cursor: pointer;
+// }
